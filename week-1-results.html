@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PickDoll 1주차 결과 보고서</title>
+<style>
+:root{color-scheme:light;--paper:#f5f3ec;--ink:#1e3029;--muted:#465a50;--line:#cdd5c9;--accent:#225b43;--white:#fffefa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 "Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+main{max-width:980px;margin:auto;padding:44px 24px 56px}
+header{background:#173b2d;color:#fffefa;padding:clamp(24px,5vw,54px);border-radius:20px}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.2;letter-spacing:-.055em}
+header p{margin-top:14px;max-width:52ch;color:#e0eee5}
+nav{display:flex;flex-wrap:wrap;gap:10px 22px;margin:20px 0 32px}
+a{color:var(--accent);text-underline-offset:4px}
+section{margin-top:34px;scroll-margin-top:18px}
+h2{font-size:24px;letter-spacing:-.04em;margin-bottom:12px}
+h3{font-size:18px;letter-spacing:-.03em}
+.summary,.weeks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.panel,.week{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--white)}
+.summary p,.week p{margin-top:6px;color:var(--muted)}
+.flow{display:flex;list-style:none;padding:0;margin:0;gap:8px;flex-wrap:wrap}
+.flow li{background:#e1eae1;border-radius:7px;padding:5px 10px}
+.week{border-top:4px solid var(--accent)}
+.week ul{padding-left:19px;margin:10px 0}
+ul.checks{margin:0;padding-left:22px}
+.checks li+li{margin-top:8px}
+.note{margin-top:12px;padding:13px 16px;background:#e1eae1;border-left:3px solid var(--accent)}
+.snapshot{margin:16px 0 0;max-width:660px;break-inside:avoid}
+.snapshot img{display:block;width:100%;height:auto;border-radius:12px;background:#000}
+.snapshot figcaption{margin-top:6px;color:var(--muted);font-size:14px}
+footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-size:14px}
+@media(max-width:680px){main{padding:20px 16px 36px}.summary,.weeks{grid-template-columns:1fr}}
+@media print{body{background:white;font-size:11pt}main{padding:0}header{background:white;color:var(--ink);border:1px solid var(--line);padding:18px}header p{color:var(--ink)}nav{display:none}.week,.panel,.note{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>PickDoll 1주차 결과</h1>
+<p>MuJoCo 인형뽑기에서 화면을 보며 조준하고, 버튼을 눌러 100g 시험 인형을 들어 올리는 프로토타입을 구현했다.</p>
+</header>
+<section id="week-1-results">
+<h2>1주차 결과 · 수동 조준과 자동 집기</h2>
+<div class="panel">
+<ul class="checks">
+<li><strong>프로토타입</strong> — 40cm 상자, XYZ 이동, 3발 집게, 100g 시험 인형 세 개를 구현했다.</li>
+<li><strong>조작</strong> — 방향키와 Shift로 화면 기준 이동과 미세 조준을 한다. Enter로 하강·집기·상승을 실행하고 Space로 인형을 놓는다. Tab 또는 1~5로 카메라를 바꾼다.</li>
+<li><strong>플레이 테스트 반영</strong> — 바닥에 조준 위치를 표시했다. 구석에 떨어진 인형이 안쪽으로 돌아오도록 경사면을 넣고, 집게 패드의 마찰과 인형의 구름 저항을 높였다.</li>
+<li><strong>검증</strong> — 세 인형을 각각 집어 옮긴 뒤 놓을 수 있었고, 네 구석에서 인형이 다시 집게 이동 범위로 돌아왔다. 다섯 카메라 시점에서 방향키가 화면 방향과 일치했다.</li>
+</ul>
+</div>
+<figure class="snapshot">
+<img src="week-1-pickup.gif" width="760" height="576" alt="3발 집게가 파란 인형 위로 내려가 몸통을 잡고 다시 들어 올리는 애니메이션">
+<figcaption>MuJoCo 정면 사선 시점에서 캡처한 하강, 집기, 상승 과정. 약 7초마다 반복된다.</figcaption>
+</figure>
+<p class="note">2주차에는 집게가 들어 올린 인형을 배출구까지 옮겨 떨어뜨리는 동작을 연결한다.</p>
+</section>
+<section id="replay">
+<h2>실행과 확인</h2>
+<div class="panel">
+<p>프로젝트 폴더에서 <code>.\.venv\Scripts\python.exe pickdoll.py</code>를 실행한다.</p>
+<p>가운데 인형을 바로 집으려면 R로 초기화한 뒤 Enter를 누른다. 다른 인형은 2번 키로 위에서 보는 시점을 선택한 뒤, 바닥의 초록색 점을 인형 몸통에 맞춰 집는다.</p>
+</div>
+</section>
+<footer><a href="mujoco-claw-project-plan.html#week-1-results">전체 제작 계획서</a></footer>
+</main>
+</body>
+</html>

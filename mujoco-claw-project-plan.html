@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MuJoCo 인형뽑기 제작 계획서</title>
+<style>
+:root{color-scheme:light;--paper:#f5f3ec;--ink:#1e3029;--muted:#465a50;--line:#cdd5c9;--accent:#225b43;--white:#fffefa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 "Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+main{max-width:980px;margin:auto;padding:44px 24px 56px}
+header{background:#173b2d;color:#fffefa;padding:clamp(24px,5vw,54px);border-radius:20px}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.2;letter-spacing:-.055em}
+header p{margin-top:14px;max-width:52ch;color:#e0eee5}
+nav{display:flex;flex-wrap:wrap;gap:10px 22px;margin:20px 0 32px}
+a{color:var(--accent);text-underline-offset:4px}
+section{margin-top:34px;scroll-margin-top:18px}
+h2{font-size:24px;letter-spacing:-.04em;margin-bottom:12px}
+h3{font-size:18px;letter-spacing:-.03em}
+.summary,.weeks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.panel,.week{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--white)}
+.summary p,.week p{margin-top:6px;color:var(--muted)}
+.flow{display:flex;list-style:none;padding:0;margin:0;gap:8px;flex-wrap:wrap}
+.flow li{background:#e1eae1;border-radius:7px;padding:5px 10px}
+.week{border-top:4px solid var(--accent)}
+.week ul{padding-left:19px;margin:10px 0}
+ul.checks{margin:0;padding-left:22px}
+.checks li+li{margin-top:8px}
+.note{margin-top:12px;padding:13px 16px;background:#e1eae1;border-left:3px solid var(--accent)}
+.snapshot{margin:16px 0 0;max-width:660px;break-inside:avoid}
+.snapshot img{display:block;width:100%;height:auto;border-radius:12px;background:#000}
+.snapshot figcaption{margin-top:6px;color:var(--muted);font-size:14px}
+footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-size:14px}
+@media(max-width:680px){main{padding:20px 16px 36px}.summary,.weeks{grid-template-columns:1fr}}
+@media print{body{background:white;font-size:11pt}main{padding:0}header{background:white;color:var(--ink);border:1px solid var(--line);padding:18px}header p{color:var(--ink)}nav{display:none}.week,.panel,.note{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>MuJoCo 인형뽑기 제작 계획서</h1>
+<p>40cm 탁상형 인형뽑기를 화면 속에서 구현한다. 처음 해보는 사람도 직접 조준하고, 집게로 인형을 들어 올려 배출구에 떨어뜨릴 수 있게 한다.</p>
+</header>
+<nav aria-label="목차">
+<a href="#scope">구현 범위</a><a href="#schedule">제작 일정</a><a href="#week-1-results">1주차 결과</a><a href="#acceptance">완료 기준</a>
+</nav>
+<section id="scope">
+<h2>첫 플레이 버전의 범위</h2>
+<div class="summary">
+<div class="panel"><h3>기계</h3><p>40cm 상자 안에 XYZ 슬라이드 관절과 회전 관절 3개로 움직이는 집게를 구성한다. 정면 사선 카메라에서 집게와 배출구가 함께 보이게 한다.</p></div>
+<div class="panel"><h3>집기 물리</h3><p>50~100g의 단순 강체 인형을 사용한다. 집게 힘에 상한을 두고, 접촉과 마찰에 따라 인형이 들리거나 미끄러지게 한다.</p></div>
+<div class="panel"><h3>조작</h3><p>방향키로 조준하고 스페이스바로 집는다. 게임패드가 있으면 스틱 기울기에 따라 이동 속도를 달리하고 뽑기 버튼을 연결한다.</p></div>
+</div>
+<p class="note">MuJoCo는 관절과 접촉을 계산하고 Python은 입력과 동작 순서를 제어한다. Blender 외장·인형 모델, 줄감개 시뮬레이션, 봉제인형 변형은 첫 버전이 완성된 뒤 필요에 따라 추가한다.</p>
+</section>
+<section aria-labelledby="flow-title">
+<h2 id="flow-title">한 판의 흐름</h2>
+<ol class="flow"><li>조준</li><li>버튼 누르기</li><li>집게 하강</li><li>닫기</li><li>상승</li><li>배출구로 이동</li><li>열기</li><li>다음 판 대기</li></ol>
+</section>
+<section id="schedule">
+<h2>3주 제작 일정 · 주 6시간, 총 18시간</h2>
+<div class="weeks">
+<article class="week">
+<h3>1주차 · 모델과 조준</h3>
+<ul><li><strong>3시간</strong> — MuJoCo 실행 환경을 준비하고 상자, XYZ 관절, 집게발을 모델링한다.</li><li><strong>3시간</strong> — 이동 한계와 키보드 입력을 연결한다. 집게를 인형 바로 위에 놓고 열고 닫는 시험을 시작한다.</li></ul>
+<p><strong>완료 확인</strong> — 방향키로 조준하고 집게를 열고 닫을 수 있다.</p>
+</article>
+<article class="week">
+<h3>2주차 · 집기와 자동 배출</h3>
+<ul><li><strong>3시간</strong> — 집게발 모양, 닫힘 힘과 마찰을 조정해 100g 인형을 약 15cm 들어 올린다.</li><li><strong>3시간</strong> — 하강부터 배출까지 상태 전환을 연결하고, 빈 집게로도 한 판이 끝나는지 시험한다.</li></ul>
+<p><strong>완료 확인</strong> — 버튼 한 번으로 인형을 들어 배출구에 놓는다.</p>
+</article>
+<article class="week">
+<h3>3주차 · 조작감과 테스트</h3>
+<ul><li><strong>3시간</strong> — 게임패드 입력, 미세 조준 속도와 정지 반응을 조정한다. 키보드 조작도 확인한다.</li><li><strong>3시간</strong> — 카메라와 조작 안내를 정리하고 처음 보는 사람에게 플레이를 맡긴다.</li></ul>
+<p><strong>완료 확인</strong> — 처음 해보는 사람이 조준하고 한 판을 마친 뒤 다음 판을 시작한다.</p>
+</article>
+</div>
+</section>
+<section id="week-1-results">
+<h2>1주차 결과 · 수동 조준과 자동 집기</h2>
+<div class="panel">
+<ul class="checks">
+<li><strong>프로토타입</strong> — 40cm 상자, XYZ 이동, 3발 집게, 100g 시험 인형 세 개를 구현했다.</li>
+<li><strong>조작</strong> — 방향키와 Shift로 화면 기준 이동과 미세 조준을 한다. Enter로 하강·집기·상승을 실행하고 Space로 인형을 놓는다. Tab 또는 1~5로 카메라를 바꾼다.</li>
+<li><strong>플레이 테스트 반영</strong> — 바닥에 조준 위치를 표시했다. 구석에 떨어진 인형이 안쪽으로 돌아오도록 경사면을 넣고, 집게 패드의 마찰과 인형의 구름 저항을 높였다.</li>
+<li><strong>검증</strong> — 세 인형을 각각 집어 옮긴 뒤 놓을 수 있었고, 네 구석에서 인형이 다시 집게 이동 범위로 돌아왔다. 다섯 카메라 시점에서 방향키가 화면 방향과 일치했다.</li>
+</ul>
+</div>
+<figure class="snapshot">
+<img src="week-1-snapshot.png" width="1000" height="760" alt="3발 집게가 파란 인형을 들어 올리고 분홍과 보라 인형은 초록색 경사면 안쪽 바닥에 놓인 장면">
+<figcaption>MuJoCo 정면 사선 시점에서 캡처한 파란 인형 집기 성공 장면.</figcaption>
+</figure>
+<p class="note">2주차에는 집게가 들어 올린 인형을 배출구까지 옮겨 떨어뜨리는 동작을 연결한다.</p>
+</section>
+<section id="acceptance">
+<h2>최종 확인</h2>
+<div class="panel">
+<ul class="checks">
+<li><strong>집기</strong> — 가운데를 조준하면 100g 시험 인형을 들어 올릴 수 있고, 크게 빗나가면 빈 집게로 돌아온다.</li>
+<li><strong>연속 플레이</strong> — 집기 성공과 실패를 섞어 10판을 진행한다. 진행 중 버튼을 다시 눌러도 두 판이 겹치지 않고, 각 판이 끝나면 조작이 돌아온다.</li>
+<li><strong>조작감</strong> — 처음 보는 사람이 화면의 키 안내만 보고 조준하고 뽑는다. 집게 위치가 헷갈리면 카메라 각도를, 멈추기 어렵다면 저속 이동과 감속을 조정한다.</li>
+<li><strong>재실행</strong> — MJCF 모델, Python 실행 코드, 의존성 목록과 실행·조작 안내를 남긴다. 창을 닫고 다시 실행해 한 판을 확인한다.</li>
+</ul>
+</div>
+<p class="note">2주차에 인형이 계속 미끄러지면 3주차 첫 세션을 집게발 형상과 닫힘 힘 조정에 쓴다. 18시간 안에 마무리할 때는 키보드 플레이를 먼저 완성하고 게임패드와 외관 작업을 다음 세션으로 옮긴다.</p>
+</section>
+<footer><a href="https://mujoco.readthedocs.io/en/stable/XMLreference.html">MuJoCo 모델 문서</a> · <a href="https://docs.blender.org/manual/en/latest/physics/rigid_body/introduction.html">Blender 강체 시뮬레이션 문서</a></footer>
+</main>
+</body>
+</html>

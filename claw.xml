@@ -1,0 +1,110 @@
+<mujoco model="PickDoll">
+  <compiler angle="radian" autolimits="true"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <visual>
+    <global fovy="40" azimuth="90" elevation="-32"/>
+  </visual>
+  <asset>
+    <mesh name="return_ramp"
+          vertex="0.119 -0.19 -0.005  0.19 -0.19 -0.005  0.19 -0.19 0.058
+                  0.119 0.19 -0.005  0.19 0.19 -0.005  0.19 0.19 0.058"
+          face="0 1 2  3 5 4  0 3 4  0 4 1  1 4 5  1 5 2  0 2 5  0 5 3"/>
+  </asset>
+  <default>
+    <geom friction="1.1 0.01 0.001"/>
+    <default class="trim">
+      <geom contype="0" conaffinity="0" rgba="0.16 0.35 0.31 1"/>
+    </default>
+    <default class="prize_body">
+      <geom type="sphere" size="0.033" mass="0.1" condim="6" friction="1.1 0.01 0.004"/>
+    </default>
+    <default class="finger">
+      <joint type="hinge" axis="0 1 0" range="0 0.95" damping="0.004"/>
+      <geom type="capsule" size="0.006" density="650" rgba="0.94 0.62 0.25 1"/>
+      <default class="grip_pad">
+        <geom friction="1.35 0.01 0.001" rgba="0.24 0.30 0.28 1"/>
+      </default>
+    </default>
+  </default>
+  <worldbody>
+    <light pos="0 -0.25 0.65" dir="0 0.35 -1" directional="true"/>
+    <body name="camera_target" pos="0 0 0.17"/>
+    <camera name="play" mode="targetbody" target="camera_target" pos="0 -0.76 0.60"/>
+    <camera name="overhead" pos="0 0 0.76" xyaxes="1 0 0 0 1 0"/>
+    <camera name="left_side" mode="targetbody" target="camera_target" pos="-0.76 0 0.60"/>
+    <camera name="right_side" mode="targetbody" target="camera_target" pos="0.76 0 0.60"/>
+    <camera name="rear" mode="targetbody" target="camera_target" pos="0 0.76 0.60"/>
+    <geom type="box" pos="0 0 -0.01" size="0.2 0.2 0.01" rgba="0.32 0.43 0.39 1"/>
+    <geom type="box" pos="-0.195 0 0.025" size="0.005 0.2 0.025" rgba="0.22 0.39 0.34 1"/>
+    <geom type="box" pos="0.195 0 0.025" size="0.005 0.2 0.025" rgba="0.22 0.39 0.34 1"/>
+    <geom type="box" pos="0 0.195 0.025" size="0.19 0.005 0.025" rgba="0.22 0.39 0.34 1"/>
+    <geom type="box" pos="0 -0.195 0.012" size="0.19 0.005 0.012" rgba="0.22 0.39 0.34 1"/>
+    <geom type="mesh" mesh="return_ramp" rgba="0.25 0.48 0.39 1"/>
+    <geom type="mesh" mesh="return_ramp" euler="0 0 1.5707963" rgba="0.25 0.48 0.39 1"/>
+    <geom type="mesh" mesh="return_ramp" euler="0 0 3.1415927" rgba="0.25 0.48 0.39 1"/>
+    <geom type="mesh" mesh="return_ramp" euler="0 0 4.7123890" rgba="0.25 0.48 0.39 1"/>
+    <geom class="trim" type="box" pos="-0.194 0 0.393" size="0.006 0.2 0.007"/>
+    <geom class="trim" type="box" pos="0.194 0 0.393" size="0.006 0.2 0.007"/>
+    <body name="gantry" pos="0 0 0.38">
+      <joint name="y" type="slide" axis="0 1 0" range="-0.128 0.128" damping="1"/>
+      <inertial pos="0 0 0" mass="0.15" diaginertia="0.0001 0.002 0.002"/>
+      <geom class="trim" type="box" size="0.19 0.008 0.008"/>
+      <body name="carriage">
+        <joint name="x" type="slide" axis="1 0 0" range="-0.128 0.128" damping="1"/>
+        <inertial pos="0 0 0" mass="0.1" diaginertia="0.0001 0.0001 0.0001"/>
+        <geom class="trim" type="box" size="0.019 0.014 0.012"/>
+        <body name="claw" pos="0 0 -0.05">
+          <joint name="z" type="slide" axis="0 0 1" range="-0.255 0" damping="1"/>
+          <geom type="cylinder" size="0.049 0.008" mass="0.075" rgba="0.88 0.54 0.20 1"/>
+          <body name="finger_a_mount">
+            <body name="finger_a" pos="0.047 0 -0.007" childclass="finger">
+              <joint name="finger_a"/>
+              <geom fromto="0 0 0 0.008 0 -0.039"/>
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057"/>
+            </body>
+          </body>
+          <body name="finger_b_mount" euler="0 0 2.0943951">
+            <body name="finger_b" pos="0.047 0 -0.007" childclass="finger">
+              <joint name="finger_b"/>
+              <geom fromto="0 0 0 0.008 0 -0.039"/>
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057"/>
+            </body>
+          </body>
+          <body name="finger_c_mount" euler="0 0 4.1887902">
+            <body name="finger_c" pos="0.047 0 -0.007" childclass="finger">
+              <joint name="finger_c"/>
+              <geom fromto="0 0 0 0.008 0 -0.039"/>
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="prize" pos="0 0 0.035">
+      <freejoint/>
+      <geom class="prize_body" rgba="0.42 0.64 0.94 1"/>
+      <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.42 0.64 0.94 1"/>
+      <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.42 0.64 0.94 1"/>
+    </body>
+    <body name="prize_left" pos="-0.10 0.05 0.035">
+      <freejoint/>
+      <geom class="prize_body" rgba="0.93 0.42 0.55 1"/>
+      <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.93 0.42 0.55 1"/>
+      <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.93 0.42 0.55 1"/>
+    </body>
+    <body name="prize_right" pos="0.10 -0.05 0.035">
+      <freejoint/>
+      <geom class="prize_body" rgba="0.72 0.52 0.90 1"/>
+      <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.72 0.52 0.90 1"/>
+      <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.72 0.52 0.90 1"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="x" joint="x" kp="350" kv="12" ctrlrange="-0.128 0.128"/>
+    <position name="y" joint="y" kp="350" kv="12" ctrlrange="-0.128 0.128"/>
+    <position name="z" joint="z" kp="700" kv="15" ctrlrange="-0.255 0"/>
+    <position name="finger_a" joint="finger_a" kp="0.55" kv="0.015" ctrlrange="0 0.95" forcerange="-0.065 0.065"/>
+    <position name="finger_b" joint="finger_b" kp="0.55" kv="0.015" ctrlrange="0 0.95" forcerange="-0.065 0.065"/>
+    <position name="finger_c" joint="finger_c" kp="0.55" kv="0.015" ctrlrange="0 0.95" forcerange="-0.065 0.065"/>
+  </actuator>
+</mujoco>
