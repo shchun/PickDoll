@@ -2,6 +2,10 @@
 
 MuJoCo로 만든 40cm 인형뽑기 프로토타입. 1주차 버전에서는 XYZ 이동과 3발 집게를 수동 조작한다.
 
+## 데모
+
+![MuJoCo에서 3발 집게가 내려가 파란 인형을 잡고 들어 올리는 장면](week-1-pickup.gif)
+
 ## Windows에서 실행
 
 ```powershell
