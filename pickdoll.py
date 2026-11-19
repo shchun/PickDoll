@@ -1,4 +1,4 @@
-"""Manual claw controls for the first PickDoll prototype."""
+"""Interactive PickDoll simulator with automatic pickup and delivery."""
 
 from math import hypot
 from pathlib import Path
@@ -11,6 +11,8 @@ import numpy as np
 
 MODEL_PATH = Path(__file__).with_name("claw.xml")
 AXES = ("x", "y", "z")
+PRIZES = ("prize", "prize_left", "prize_right")
+DROP_TARGET = (-0.128, -0.128)
 FINGERS = ("finger_a", "finger_b", "finger_c")
 VIEWS = (
     ("play", "Front"),
@@ -43,16 +45,25 @@ class Claw:
         self.closed = False
         self.phase = "manual"
         self.grip_time = 0.0
+        self.phase_time = 0.0
+        self.collected = set()
+        self.message = "Ready"
         mujoco.mj_forward(self.model, self.data)
 
     def start_pickup(self):
         if self.phase == "manual":
             self.closed = False
             self.phase = "lowering"
+            self.phase_time = 0.0
+            self.message = "Picking"
 
     def step(self, x=0, y=0, z=0, fine=False):
         if self.phase != "manual":
-            x = y = 0
+            self.phase_time += self.model.opt.timestep
+            if self.phase_time > 24:
+                self.phase = "fault"
+                self.message = "Motion timeout - press R"
+            x = y = z = 0
             height = self.data.joint("z").qpos[0]
             low, high = self.model.actuator("z").ctrlrange
             if self.phase == "lowering":
@@ -66,11 +77,45 @@ class Claw:
                 self.grip_time -= self.model.opt.timestep
                 if self.grip_time <= 0:
                     self.phase = "raising"
-            else:
+            elif self.phase == "raising":
                 z = 1
                 if height >= high - 0.006:
                     self.data.actuator("z").ctrl[0] = high
+                    self.grip_time = 0.12
+                    self.phase = "settling"
+            elif self.phase == "settling":
+                self.grip_time -= self.model.opt.timestep
+                if self.grip_time <= 0:
+                    self.phase = "delivering"
+            elif self.phase == "delivering":
+                for axis, target in zip(("x", "y"), DROP_TARGET):
+                    control = self.data.actuator(axis).ctrl
+                    delta = target - control[0]
+                    travel = 0.055 * self.model.opt.timestep
+                    control[0] += max(-travel, min(travel, delta))
+                arrived = all(
+                    abs(self.data.joint(axis).qpos[0] - target) < 0.002
+                    for axis, target in zip(("x", "y"), DROP_TARGET)
+                )
+                if arrived:
+                    self.closed = False
+                    self.grip_time = 2.0
+                    self.phase = "releasing"
+            elif self.phase == "releasing":
+                self.grip_time -= self.model.opt.timestep
+                if self.grip_time <= 0:
+                    previous = len(self.collected)
+                    for name in PRIZES:
+                        px, py, pz = self.data.body(name).xpos
+                        if (
+                            abs(px - DROP_TARGET[0]) < 0.065
+                            and abs(py - DROP_TARGET[1]) < 0.065
+                            and -0.17 < pz < -0.035
+                        ):
+                            self.collected.add(name)
+                    self.message = "Prize collected!" if len(self.collected) > previous else "Missed - try again"
                     self.phase = "manual"
+                    self.phase_time = 0.0
 
         speed = 0.021 if fine else 0.075
         xy_scale = speed / max(1, hypot(x, y))
@@ -169,8 +214,8 @@ def run():
                 mujoco.mjtGridPos.mjGRID_TOPLEFT,
                 viewport,
                 "Arrows\nShift + Arrows\nTab / 1-5\nEnter\nQ / E\nSpace\nR / Esc\nStatus",
-                f"Aim\nFine aim\nCamera: {view_label}\nLower, grab, and lift\nLower / Raise\nOpen / Close\nReset / Exit\n"
-                + (claw.phase.capitalize() if claw.phase != "manual" else "Ready"),
+                f"Aim\nFine aim\nCamera: {view_label}\nPick and deliver\nLower / Raise\nOpen / Close\nReset / Exit\n"
+                + (claw.phase.capitalize() if claw.phase != "manual" else claw.message) + f"  |  Collected: {len(claw.collected)}/3",
                 context,
             )
             glfw.swap_buffers(window)

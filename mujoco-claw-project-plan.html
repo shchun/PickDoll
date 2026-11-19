@@ -43,14 +43,14 @@ footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-si
 <p>40cm 탁상형 인형뽑기를 화면 속에서 구현한다. 처음 해보는 사람도 직접 조준하고, 집게로 인형을 들어 올려 배출구에 떨어뜨릴 수 있게 한다.</p>
 </header>
 <nav aria-label="목차">
-<a href="#scope">구현 범위</a><a href="#schedule">제작 일정</a><a href="#week-1-results">1주차 결과</a><a href="#acceptance">완료 기준</a>
+<a href="#scope">구현 범위</a><a href="#schedule">제작 일정</a><a href="#week-1-results">1주차 결과</a><a href="#week-2-results">2주차 결과</a><a href="#acceptance">완료 기준</a>
 </nav>
 <section id="scope">
 <h2>첫 플레이 버전의 범위</h2>
 <div class="summary">
 <div class="panel"><h3>기계</h3><p>40cm 상자 안에 XYZ 슬라이드 관절과 회전 관절 3개로 움직이는 집게를 구성한다. 정면 사선 카메라에서 집게와 배출구가 함께 보이게 한다.</p></div>
 <div class="panel"><h3>집기 물리</h3><p>50~100g의 단순 강체 인형을 사용한다. 집게 힘에 상한을 두고, 접촉과 마찰에 따라 인형이 들리거나 미끄러지게 한다.</p></div>
-<div class="panel"><h3>조작</h3><p>방향키로 조준하고 스페이스바로 집는다. 게임패드가 있으면 스틱 기울기에 따라 이동 속도를 달리하고 뽑기 버튼을 연결한다.</p></div>
+<div class="panel"><h3>조작</h3><p>방향키로 조준하고 Enter로 자동 집기와 배출을 실행한다. Shift로 미세 조준하고 Tab 또는 1~5로 시점을 바꾼다.</p></div>
 </div>
 <p class="note">MuJoCo는 관절과 접촉을 계산하고 Python은 입력과 동작 순서를 제어한다. Blender 외장·인형 모델, 줄감개 시뮬레이션, 봉제인형 변형은 첫 버전이 완성된 뒤 필요에 따라 추가한다.</p>
 </section>
@@ -67,13 +67,13 @@ footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-si
 <p><strong>완료 확인</strong> — 방향키로 조준하고 집게를 열고 닫을 수 있다.</p>
 </article>
 <article class="week">
-<h3>2주차 · 집기와 자동 배출</h3>
+<h3>2주차 · 집기와 자동 배출 완료</h3>
 <ul><li><strong>3시간</strong> — 집게발 모양, 닫힘 힘과 마찰을 조정해 100g 인형을 약 15cm 들어 올린다.</li><li><strong>3시간</strong> — 하강부터 배출까지 상태 전환을 연결하고, 빈 집게로도 한 판이 끝나는지 시험한다.</li></ul>
 <p><strong>완료 확인</strong> — 버튼 한 번으로 인형을 들어 배출구에 놓는다.</p>
 </article>
 <article class="week">
-<h3>3주차 · 조작감과 테스트</h3>
-<ul><li><strong>3시간</strong> — 게임패드 입력, 미세 조준 속도와 정지 반응을 조정한다. 키보드 조작도 확인한다.</li><li><strong>3시간</strong> — 카메라와 조작 안내를 정리하고 처음 보는 사람에게 플레이를 맡긴다.</li></ul>
+<h3>3주차 · 외형 마감과 플레이 테스트</h3>
+<ul><li><strong>3시간</strong> — 본체 기둥, 상단 커버와 하단 캐비닛을 만들어 기계 외형을 완성한다.</li><li><strong>3시간</strong> — 카메라와 미세 조준, 조작 안내를 다듬고 처음 보는 사람에게 플레이를 맡긴다.</li></ul>
 <p><strong>완료 확인</strong> — 처음 해보는 사람이 조준하고 한 판을 마친 뒤 다음 판을 시작한다.</p>
 </article>
 </div>
@@ -94,6 +94,22 @@ footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-si
 </figure>
 <p class="note">2주차에는 집게가 들어 올린 인형을 배출구까지 옮겨 떨어뜨리는 동작을 연결한다.</p>
 </section>
+<section id="week-2-results">
+<h2>2주차 결과 · 자동 배출 완료</h2>
+<div class="panel">
+<ul class="checks">
+<li><strong>한 판 진행</strong> — 조준 후 Enter를 누르면 하강, 집기, 상승, 배출구 이동, 놓기가 자동으로 이어진다.</li>
+<li><strong>배출 구조</strong> — 왼쪽 앞 상판에 낙하 구멍을 만들고 아래쪽에 회수함을 배치했다. 인형은 물리적으로 구멍을 통과해 회수함에 쌓인다.</li>
+<li><strong>진행 제어</strong> — 자동 진행 중에는 수동 이동과 추가 뽑기 입력을 잠근다. 24초가 지나도 동작이 끝나지 않으면 정지하고 R 초기화를 안내한다.</li>
+<li><strong>연속 검증</strong> — 최종 구조에서 초기화 없이 10판을 진행했다. 세 인형의 획득 3회와 빈 집게 실패 7회가 끝난 뒤 매번 조작이 돌아왔다. 획득 수, 아래 회수함 보관, 중복 입력, 초기화와 시간 초과 처리를 확인했다.</li>
+</ul>
+</div>
+<figure class="snapshot">
+<img src="week-2-delivery.gif" width="760" height="700" alt="집게가 파란 인형을 들어 왼쪽 앞 낙하 구멍으로 운반하고 아래 회수함에 떨어뜨리는 과정">
+<figcaption>실제 MuJoCo 시뮬레이션의 집기부터 아래 회수함 배출까지. 재생 속도는 약 1.15배이며 반복 재생된다.</figcaption>
+</figure>
+<p class="note">집는 위치와 인형 자세에 따라 미끄러질 수 있다. 검증은 프로그램으로 지정한 조준 위치와 입력을 사용했다. 손님이 직접 플레이하는 테스트는 3주차에 진행한다.</p>
+</section>
 <section id="acceptance">
 <h2>최종 확인</h2>
 <div class="panel">
@@ -104,7 +120,7 @@ footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-si
 <li><strong>재실행</strong> — MJCF 모델, Python 실행 코드, 의존성 목록과 실행·조작 안내를 남긴다. 창을 닫고 다시 실행해 한 판을 확인한다.</li>
 </ul>
 </div>
-<p class="note">2주차에 인형이 계속 미끄러지면 3주차 첫 세션을 집게발 형상과 닫힘 힘 조정에 쓴다. 18시간 안에 마무리할 때는 키보드 플레이를 먼저 완성하고 게임패드와 외관 작업을 다음 세션으로 옮긴다.</p>
+<p class="note">2주차 기능과 연속 플레이 검증을 완료했다. 3주차는 외형 마감 3시간과 조작감·플레이 테스트 3시간으로 진행한다. 게임패드 연결은 후속 작업으로 둔다.</p>
 </section>
 <footer><a href="https://mujoco.readthedocs.io/en/stable/XMLreference.html">MuJoCo 모델 문서</a> · <a href="https://docs.blender.org/manual/en/latest/physics/rigid_body/introduction.html">Blender 강체 시뮬레이션 문서</a></footer>
 </main>
