@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PickDoll 3주차 결과</title><style>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PickDoll 3주차 최종 결과</title><style>
 :root{color-scheme:light;--paper:#f5f3ec;--ink:#1e3029;--muted:#465a50;--line:#cdd5c9;--accent:#225b43;--white:#fffefa}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 "Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
@@ -28,25 +28,24 @@ ul.checks{margin:0;padding-left:22px}
 footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);font-size:14px}
 @media(max-width:680px){main{padding:20px 16px 36px}.summary,.weeks{grid-template-columns:1fr}}
 @media print{body{background:white;font-size:11pt}main{padding:0}header{background:white;color:var(--ink);border:1px solid var(--line);padding:18px}header p{color:var(--ink)}nav{display:none}.week,.panel,.note{break-inside:avoid}}
-</style></head><body><main>
-<header><h1>PickDoll 3주차 결과</h1><p>외형과 조작 안내를 구현하고 자동 검증을 마쳤다. 손님 플레이 테스트를 앞두고 있다.</p></header>
-<section id="week-3-results">
-<h2>3주차 결과 · 외형과 조작 안내 구현</h2>
+</style></head><body><main><header><h1>PickDoll 3주차 최종 결과</h1><p>핑크 외장, 7개 랜덤 인형, 회전 집게와 소리·빛 효과를 갖춘 게임으로 마감했다.</p></header><nav aria-label="목차"><a href="#week-3-results">최종 결과</a><a href="#playtest">실행과 조작</a><a href="#further-idea">Further idea</a></nav><section id="week-3-results">
+<h2>3주차 최종 결과</h2>
 <div class="panel"><ul class="checks">
-<li><strong>기계 외형</strong> — 크림색 기둥과 상단 프레임, 청록색 하단 캐비닛, 조이스틱과 뽑기 버튼을 배치했다. 상품 출구로 아래 회수함을 볼 수 있다.</li>
-<li><strong>집게와 인형</strong> — 승강부와 집게를 잇는 줄을 표현하고, 인형에 눈과 입을 더했다. 배경과 조명을 조정해 기계의 전체 형태가 보이도록 했다.</li>
-<li><strong>조준과 안내</strong> — 다섯 시점에서 화면 방향에 맞춰 조작한다. 위에서 볼 때 집게와 가로 빔을 숨겨 인형과 초록색 조준점을 볼 수 있다. 기본 조작은 화면 아래에 표시하고 H로 수동 조작 안내를 펼친다.</li>
-<li><strong>진행 상태</strong> — 현재 동작과 획득 수를 표시한다. 세 인형을 모두 얻으면 R로 새 게임을 시작하도록 안내한다.</li>
-<li><strong>검증</strong> — 새 외형을 적용한 상태에서 성공 3회와 실패 7회의 동작을 확인했다. 세 인형을 모두 획득한 뒤 초기화해 나머지 실패 시험을 진행했다. 다섯 카메라의 방향키 대응, 미세 조준, H 안내와 화면 렌더링을 확인했다.</li>
+<li><strong>외형</strong> — 핑크 토끼 캐릭터 패널, 움직이는 제어봉과 버튼, 투명 충돌 벽, 상단·기둥 LED 띠를 완성했다.</li>
+<li><strong>조작</strong> — 다섯 카메라, Shift 저속 이동, Ctrl 방향키 1mm 이동과 Z/X 집게 회전을 지원한다. 중심에서 2.5cm 안에 조준하면 중심을 보정한다.</li>
+<li><strong>집기와 배출</strong> — 세 발을 연동하고 하강이 막히면 그 높이에서 잡는다. 상판 구멍과 경사 통로를 지나 인형이 기계 앞쪽 받침으로 나온다. 구멍 주변 투명 가이드는 굴러 들어오는 인형을 막는다.</li>
+<li><strong>인형과 효과</strong> — 실행과 R 초기화마다 7개를 무작위 배치한다. 오리지널 배경음악과 버튼·집기·성공·실패 효과음, 획득 시 LED와 입자 효과를 추가했다.</li>
+<li><strong>최종 검증</strong> — 고정 난수 배치에서 10판을 연속 진행해 획득 7회와 실패 3회를 확인했다. 미세 이동, 회전, LED, 초기화, 시간 초과와 음악·효과음 동시 재생도 확인했다. 이 수치는 지정한 시험 입력의 결과다.</li>
 </ul></div>
-<figure class="snapshot"><img src="week-3-machine.gif" width="760" height="760" alt="프레임과 캐비닛이 있는 인형뽑기에서 파란 인형을 집어 아래 상품 출구로 배출하는 과정"><figcaption>3주차 외형을 적용한 자동 집기와 배출. 실제 시뮬레이션을 약 1.15배 속도로 반복 재생한다.</figcaption></figure>
-<p class="note">남은 확인은 처음 사용하는 손님의 플레이 테스트다. 아래 항목으로 직접 사용한 결과를 확인하면 3주차를 마감할 수 있다.</p>
-</section><section id="playtest"><h2>손님 플레이 테스트</h2>
-<div class="panel"><ol>
-<li>조작을 설명하지 않고 화면 안내만 보여준다. 방향키로 움직이고 Enter로 뽑기를 시작할 수 있는지 확인한다.</li>
-<li>Tab이나 숫자 키로 시점을 바꾸고, Shift를 사용해 인형 몸통에 조준할 수 있는지 확인한다.</li>
-<li>획득과 실패 후 다음 판을 시작하고, 상품이 아래 회수함으로 들어가는 것을 이해하는지 확인한다.</li>
-<li>세 개 획득 후 R로 새 게임을 시작하게 한다. 헷갈린 키나 가려진 위치가 있으면 그 장면과 시점을 기록한다.</li>
-</ol></div><p class="note">게임패드 연결은 후속 작업이다. 집게 줄은 시각적으로 표현했으며, 집게 승강은 기존 슬라이드 관절을 사용한다.</p></section>
-<footer><a href="mujoco-claw-project-plan.html#week-3-results">제작 계획서</a> · <a href="week-2-results.html">2주차 결과</a></footer>
-</main></body></html>
+<figure class="snapshot"><img src="week-3-machine.gif" width="760" height="760" alt="LED가 빛나는 핑크 인형뽑기에서 인형을 집어 앞쪽 받침으로 배출하는 과정"><figcaption>최종 외형과 7개 랜덤 배치를 적용한 실제 시뮬레이션. 약 1.15배 속도로 반복 재생하며 GIF에는 소리가 없다.</figcaption></figure>
+<p class="note">2026년 11월 19일 사용자 플레이 피드백을 반영하고 현재 상태를 3주차 최종본으로 마감했다. 별도의 처음 사용하는 손님 테스트 결과는 수집하지 않았다.</p>
+</section><section id="playtest"><h2>실행과 조작</h2><div class="panel"><p>프로젝트 폴더에서 <code>.&#92;.venv&#92;Scripts&#92;python.exe pickdoll.py</code>를 실행한다.</p><ul class="checks">
+<li>방향키로 조준하고 Shift로 천천히 이동한다. Ctrl 방향키는 한 번에 1mm 이동한다.</li><li>Z/X로 집게를 회전하고 Enter로 자동 집기·배출을 시작한다.</li><li>Tab 또는 1~5로 시점을 바꾼다. H로 수동 조작 안내를 펼친다.</li><li>M은 음악, N은 효과음이다. R은 인형 7개를 새 위치에 배치하고 획득 수를 초기화한다.</li>
+</ul></div><p class="note">오디오는 Windows에서 재생한다. 집게 줄은 시각 표현이고 승강은 슬라이드 관절로 계산한다. 인형은 둥근 강체다.</p></section><section id="further-idea">
+<h2>Further idea</h2>
+<div class="panel"><h3>웹 사이트</h3><p>PC와 휴대폰에서 링크를 열어 플레이하는 버전을 검토한다. MuJoCo의 브라우저 실행 경로를 활용하고 Python 입력·진행 코드를 웹 환경으로 옮긴다. 터치 조이스틱, 뽑기·회전·카메라 버튼을 만들고 모바일 성능과 오디오 재생을 확인한다.</p></div>
+<div class="panel" style="margin-top:12px"><h3>안드로이드 앱</h3><p>웹에서 터치 조작을 검증한 뒤 설치형 앱으로 확장하는 방향을 검토한다. WebView로 웹 버전을 담는 방법을 비교하고 기기별 프레임 속도, 앱 전환·복귀, 소리 중단·재개와 오프라인 범위를 확인한다.</p></div>
+<div class="panel" style="margin-top:12px"><h3>30 × 30cm 실물 제품</h3><p>바닥 면적 30 × 30cm, 높이 40~45cm의 탁상형을 초기 설계 목표로 검토한다. 인형 폭 4~6cm와 집게 벌림 폭 6~8cm를 출발점으로 삼을 수 있다. 이 치수는 부품 선정 전 추정치이며 CAD 간섭 검토와 인양 시험으로 확정한다.</p><p>프레임·가이드·모터가 차지하는 폭을 빼고 조준 범위를 산정한다. 승강부와 하단 배출 통로 높이도 확보한다. 100g 인형을 유지하려면 집게 무게를 포함해 상승 모터와 그립을 검증한다. 현재의 원점 복귀·상태 전환·외형 컨셉을 실물 설계에 참고한다.</p></div>
+<p class="note">검토 순서는 웹 플레이와 모바일 조작 확인, 안드로이드 확장, 30cm 실물 치수 검토다. 후속 제작 착수와 일정은 추후 정한다.</p>
+<p style="margin-top:12px"><a href="https://mujoco.readthedocs.io/en/stable/studio/web_viewers.html">MuJoCo 웹 실행 문서</a> · <a href="https://developer.android.com/develop/ui/views/layout/webapps/webview">Android WebView 문서</a></p>
+</section><footer><a href="mujoco-claw-project-plan.html#week-3-results">제작 계획서</a> · <a href="week-2-results.html">2주차 결과</a></footer></main></body></html>
