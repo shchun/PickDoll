@@ -3,11 +3,13 @@
   <option timestep="0.002" integrator="implicitfast" />
   <visual>
     <global fovy="40" azimuth="90" elevation="-32" />
+    <headlight ambient=".45 .45 .45" diffuse=".55 .55 .55" specular=".15 .15 .15" />
   </visual>
   <asset>
     <mesh name="return_ramp" vertex="0.119 -0.19 -0.005  0.19 -0.19 -0.005  0.19 -0.19 0.058                   0.119 0.19 -0.005  0.19 0.19 -0.005  0.19 0.19 0.058" face="0 1 2  3 5 4  0 3 4  0 4 1  1 4 5  1 5 2  0 2 5  0 5 3" />
     <mesh name="west_short" vertex="-.19 -.058 -.005 -.119 -.058 -.005 -.19 -.058 .058 -.19 .19 -.005 -.119 .19 -.005 -.19 .19 .058" face="0 1 2 3 5 4 0 3 4 0 4 1 1 4 5 1 5 2 0 2 5 0 5 3" />
     <mesh name="south_short" vertex="-.058 -.19 -.005 -.058 -.119 -.005 -.058 -.19 .058 .19 -.19 -.005 .19 -.119 -.005 .19 -.19 .058" face="0 1 2 3 5 4 0 3 4 0 4 1 1 4 5 1 5 2 0 2 5 0 5 3" />
+    <texture name="studio_sky" type="skybox" builtin="gradient" rgb1=".15 .20 .23" rgb2=".32 .40 .42" width="256" height="512" />
   </asset>
   <default>
     <geom friction="1.1 0.01 0.001" />
@@ -27,12 +29,12 @@
   </default>
   <worldbody>
     <light pos="0 -0.25 0.65" dir="0 0.35 -1" directional="true" />
-    <body name="camera_target" pos="0 0 0.17" />
-    <camera name="play" mode="targetbody" target="camera_target" pos="0 -0.76 0.60" />
+    <body name="camera_target" pos="0 0 .105" />
+    <camera name="play" mode="targetbody" target="camera_target" pos="0 -.94 .57" />
     <camera name="overhead" pos="0 0 0.76" xyaxes="1 0 0 0 1 0" />
-    <camera name="left_side" mode="targetbody" target="camera_target" pos="-0.76 0 0.60" />
-    <camera name="right_side" mode="targetbody" target="camera_target" pos="0.76 0 0.60" />
-    <camera name="rear" mode="targetbody" target="camera_target" pos="0 0.76 0.60" />
+    <camera name="left_side" mode="targetbody" target="camera_target" pos="-.94 0 .57" />
+    <camera name="right_side" mode="targetbody" target="camera_target" pos=".94 0 .57" />
+    <camera name="rear" mode="targetbody" target="camera_target" pos="0 .94 .57" />
     <geom type="box" pos="-0.195 0 0.025" size="0.005 0.2 0.025" rgba="0.22 0.39 0.34 1" />
     <geom type="box" pos="0.195 0 0.025" size="0.005 0.2 0.025" rgba="0.22 0.39 0.34 1" />
     <geom type="box" pos="0 0.195 0.025" size="0.19 0.005 0.025" rgba="0.22 0.39 0.34 1" />
@@ -51,36 +53,38 @@
     <body name="gantry" pos="0 0 0.38">
       <joint name="y" type="slide" axis="0 1 0" range="-0.128 0.128" damping="1" />
       <inertial pos="0 0 0" mass="0.15" diaginertia="0.0001 0.002 0.002" />
-      <geom class="trim" type="box" size="0.19 0.008 0.008" />
+      <geom class="trim" type="box" size="0.19 0.008 0.008" group="3" />
       <body name="carriage">
         <joint name="x" type="slide" axis="1 0 0" range="-0.128 0.128" damping="1" />
         <inertial pos="0 0 0" mass="0.1" diaginertia="0.0001 0.0001 0.0001" />
-        <geom class="trim" type="box" size="0.019 0.014 0.012" />
+        <geom class="trim" type="box" size="0.019 0.014 0.012" group="3" />
         <body name="claw" pos="0 0 -0.05">
           <joint name="z" type="slide" axis="0 0 1" range="-0.255 0" damping="1" />
-          <geom type="cylinder" size="0.049 0.008" mass="0.075" rgba="0.88 0.54 0.20 1" />
+          <geom type="cylinder" size="0.049 0.008" mass="0.075" rgba="0.88 0.54 0.20 1" group="3" />
           <body name="finger_a_mount">
             <body name="finger_a" pos="0.047 0 -0.007" childclass="finger">
               <joint name="finger_a" />
-              <geom fromto="0 0 0 0.008 0 -0.039" />
-              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" />
+              <geom fromto="0 0 0 0.008 0 -0.039" group="3" />
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" group="3" />
             </body>
           </body>
           <body name="finger_b_mount" euler="0 0 2.0943951">
             <body name="finger_b" pos="0.047 0 -0.007" childclass="finger">
               <joint name="finger_b" />
-              <geom fromto="0 0 0 0.008 0 -0.039" />
-              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" />
+              <geom fromto="0 0 0 0.008 0 -0.039" group="3" />
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" group="3" />
             </body>
           </body>
           <body name="finger_c_mount" euler="0 0 4.1887902">
             <body name="finger_c" pos="0.047 0 -0.007" childclass="finger">
               <joint name="finger_c" />
-              <geom fromto="0 0 0 0.008 0 -0.039" />
-              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" />
+              <geom fromto="0 0 0 0.008 0 -0.039" group="3" />
+              <geom class="grip_pad" fromto="0.008 0 -0.039 -0.001 0 -0.057" group="3" />
             </body>
           </body>
+          <site name="cable_bottom" pos="0 0 .009" size=".001" rgba="0 0 0 0" />
         </body>
+        <site name="cable_top" pos="0 0 -.014" size=".001" rgba="0 0 0 0" />
       </body>
     </body>
     <body name="prize" pos="0 0 0.035">
@@ -88,23 +92,59 @@
       <geom class="prize_body" rgba="0.42 0.64 0.94 1" />
       <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.42 0.64 0.94 1" />
       <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.42 0.64 0.94 1" />
+      <geom type="sphere" pos="-0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="sphere" pos="0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="ellipsoid" pos="0 -.032 -.003" size=".006 .003 .004" mass="0" contype="0" conaffinity="0" rgba=".94 .86 .71 1" />
     </body>
     <body name="prize_left" pos="-0.10 0.05 0.035">
       <freejoint />
       <geom class="prize_body" rgba="0.93 0.42 0.55 1" />
       <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.93 0.42 0.55 1" />
       <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.93 0.42 0.55 1" />
+      <geom type="sphere" pos="-0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="sphere" pos="0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="ellipsoid" pos="0 -.032 -.003" size=".006 .003 .004" mass="0" contype="0" conaffinity="0" rgba=".94 .86 .71 1" />
     </body>
     <body name="prize_right" pos="0.10 -0.05 0.035">
       <freejoint />
       <geom class="prize_body" rgba="0.72 0.52 0.90 1" />
       <geom type="sphere" pos="-0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.72 0.52 0.90 1" />
       <geom type="sphere" pos="0.021 0 0.029" size="0.013" mass="0" contype="0" conaffinity="0" rgba="0.72 0.52 0.90 1" />
+      <geom type="sphere" pos="-0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="sphere" pos="0.011 -.029 .008" size=".0045" mass="0" contype="0" conaffinity="0" rgba=".08 .12 .15 1" />
+      <geom type="ellipsoid" pos="0 -.032 -.003" size=".006 .003 .004" mass="0" contype="0" conaffinity="0" rgba=".94 .86 .71 1" />
     </body>
     <geom type="box" pos="0.071 0 -0.01" size="0.129 0.2 0.01" rgba="0.32 0.43 0.39 1" />
     <geom type="box" pos="-.129 .071 -.01" size=".071 .129 .01" rgba="0.32 0.43 0.39 1" />
     <geom type="mesh" mesh="west_short" rgba="0.25 0.48 0.39 1" />
     <geom type="mesh" mesh="south_short" rgba="0.25 0.48 0.39 1" />
+    <body name="cabinet">
+      <geom name="pillar_-0.206_-0.206" type="box" pos="-0.206 -0.206 .205" size=".006 .006 .205" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="pillar_-0.206_0.206" type="box" pos="-0.206 0.206 .205" size=".006 .006 .205" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="pillar_0.206_-0.206" type="box" pos="0.206 -0.206 .205" size=".006 .006 .205" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="pillar_0.206_0.206" type="box" pos="0.206 0.206 .205" size=".006 .006 .205" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="top_side_-0.206" type="box" pos="-0.206 0 .424" size=".014 .220 .020" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="top_side_0.206" type="box" pos="0.206 0 .424" size=".014 .220 .020" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="top_front" type="box" pos="0 -.206 .424" size=".192 .014 .020" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="top_rear" type="box" pos="0 .206 .424" size=".192 .014 .020" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="header_light" type="box" pos="0 -.221 .416" size=".158 .001 .002" rgba=".94 .64 .22 1" contype="0" conaffinity="0" />
+      <geom name="cabinet_right" type="box" pos=".208 0 -.099" size=".008 .216 .099" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="cabinet_left" type="box" pos="-.208 0 -.099" size=".008 .216 .099" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="cabinet_back" type="box" pos="0 .208 -.099" size=".20 .008 .099" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="cabinet_base" type="box" pos="0 0 -.194" size=".216 .216 .008" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="front_bottom" type="box" pos="0 -.208 -.184" size=".20 .008 .010" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom name="front_top" type="box" pos="0 -.208 -.026" size=".20 .008 .026" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="front_right" type="box" pos=".075 -.208 -.113" size=".125 .008 .061" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="front_left" type="box" pos="-.199 -.208 -.113" size=".001 .008 .061" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+      <geom name="outlet_sill" type="box" pos="-.126 -.218 -.171" size=".074 .016 .004" rgba=".94 .64 .22 1" contype="0" conaffinity="0" />
+      <geom name="outlet_header" type="box" pos="-.126 -.218 -.057" size=".074 .004 .004" rgba=".94 .64 .22 1" contype="0" conaffinity="0" />
+      <geom name="control_panel" type="box" pos=".07 -.234 .003" size=".132 .037 .009" rgba=".88 .86 .77 1" contype="0" conaffinity="0" />
+      <geom type="cylinder" pos=".135 -.24 .019" size=".018 .006" rgba=".94 .64 .22 1" contype="0" conaffinity="0" />
+      <geom type="capsule" fromto=".015 -.24 .013 .015 -.24 .043" size=".003" rgba=".20 .24 .24 1" contype="0" conaffinity="0" />
+      <geom type="sphere" pos=".015 -.24 .045" size=".010" rgba=".13 .32 .30 1" contype="0" conaffinity="0" />
+    </body>
+    <geom type="plane" pos="0 0 -.205" size="2 2 .01" rgba=".22 .28 .29 1" contype="0" conaffinity="0" />
+    <light pos=".4 -.3 .6" dir="-.4 .3 -.6" diffuse=".35 .33 .29" castshadow="false" />
   </worldbody>
   <actuator>
     <position name="x" joint="x" kp="350" kv="12" ctrlrange="-0.128 0.128" />
@@ -114,4 +154,10 @@
     <position name="finger_b" joint="finger_b" kp="0.55" kv="0.015" ctrlrange="0 0.95" forcerange="-0.065 0.065" />
     <position name="finger_c" joint="finger_c" kp="0.55" kv="0.015" ctrlrange="0 0.95" forcerange="-0.065 0.065" />
   </actuator>
+  <tendon>
+    <spatial name="suspension_cable" width=".0018" rgba=".25 .28 .28 1" group="3">
+      <site site="cable_top" />
+      <site site="cable_bottom" />
+    </spatial>
+  </tendon>
 </mujoco>

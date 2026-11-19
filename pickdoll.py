@@ -14,6 +14,15 @@ AXES = ("x", "y", "z")
 PRIZES = ("prize", "prize_left", "prize_right")
 DROP_TARGET = (-0.128, -0.128)
 FINGERS = ("finger_a", "finger_b", "finger_c")
+PHASE_LABELS = {
+    "lowering": "Lowering",
+    "gripping": "Gripping",
+    "raising": "Lifting",
+    "settling": "Holding",
+    "delivering": "Moving to prize chute",
+    "releasing": "Dropping into collection bay",
+    "fault": "Motion timeout - press R to restart",
+}
 VIEWS = (
     ("play", "Front"),
     ("overhead", "Overhead"),
@@ -51,7 +60,7 @@ class Claw:
         mujoco.mj_forward(self.model, self.data)
 
     def start_pickup(self):
-        if self.phase == "manual":
+        if self.phase == "manual" and len(self.collected) < len(PRIZES):
             self.closed = False
             self.phase = "lowering"
             self.phase_time = 0.0
@@ -113,7 +122,12 @@ class Claw:
                             and -0.17 < pz < -0.035
                         ):
                             self.collected.add(name)
-                    self.message = "Prize collected!" if len(self.collected) > previous else "Missed - try again"
+                    if len(self.collected) == len(PRIZES):
+                        self.message = "All 3 collected! Press R to play again"
+                    elif len(self.collected) > previous:
+                        self.message = "Prize collected! Aim for the next one"
+                    else:
+                        self.message = "Missed - aim and try again"
                     self.phase = "manual"
                     self.phase_time = 0.0
 
@@ -143,14 +157,17 @@ def run():
         glfw.make_context_current(window)
         glfw.swap_interval(1)
         view_index = 0
+        show_manual_controls = False
         camera_ids = [claw.model.camera(name).id for name, _ in VIEWS]
 
         def on_key(window, key, _scancode, action, _mods):
-            nonlocal view_index
+            nonlocal view_index, show_manual_controls
             if action != glfw.PRESS:
                 return
             if key == glfw.KEY_ENTER:
                 claw.start_pickup()
+            elif key == glfw.KEY_H:
+                show_manual_controls = not show_manual_controls
             elif key == glfw.KEY_TAB:
                 view_index = (view_index + 1) % len(VIEWS)
             elif glfw.KEY_1 <= key <= glfw.KEY_5:
@@ -181,6 +198,8 @@ def run():
             previous = now
             view_name, view_label = VIEWS[view_index]
             camera.fixedcamid = camera_ids[view_index]
+            options.geomgroup[3] = view_name != "overhead"
+            options.tendongroup[3] = view_name != "overhead"
             horizontal = pressed(glfw.KEY_RIGHT) - pressed(glfw.KEY_LEFT)
             vertical = pressed(glfw.KEY_UP) - pressed(glfw.KEY_DOWN)
             x, y = aim_direction(view_name, horizontal, vertical)
@@ -209,14 +228,26 @@ def run():
             )
             scene.ngeom += 1
             mujoco.mjr_render(viewport, scene, context)
+            status = PHASE_LABELS.get(claw.phase, claw.message)
             mujoco.mjr_overlay(
                 mujoco.mjtFont.mjFONT_NORMAL,
                 mujoco.mjtGridPos.mjGRID_TOPLEFT,
                 viewport,
-                "Arrows\nShift + Arrows\nTab / 1-5\nEnter\nQ / E\nSpace\nR / Esc\nStatus",
-                f"Aim\nFine aim\nCamera: {view_label}\nPick and deliver\nLower / Raise\nOpen / Close\nReset / Exit\n"
-                + (claw.phase.capitalize() if claw.phase != "manual" else claw.message) + f"  |  Collected: {len(claw.collected)}/3",
+                "PICKDOLL\nCollected\nCamera\nStatus",
+                f"\n{len(claw.collected)} / 3\n{view_label}\n{status}",
                 context,
+            )
+            help_text = (
+                "Arrow keys: aim   |   Hold Shift: fine aim\n"
+                "Enter: pick and deliver   |   Tab / 1-5: camera\n"
+                "R: restart   |   H: manual controls   |   Esc: exit"
+            )
+            if show_manual_controls:
+                help_text += "\nQ / E: lower / raise   |   Space: open / close (when ready)"
+            mujoco.mjr_overlay(
+                mujoco.mjtFont.mjFONT_NORMAL,
+                mujoco.mjtGridPos.mjGRID_BOTTOMLEFT,
+                viewport, help_text, "", context,
             )
             glfw.swap_buffers(window)
     finally:
