@@ -36,7 +36,7 @@ namespace PickDoll
             drag.gameObject.AddComponent<Image>().color = Color.clear;
             drag.gameObject.AddComponent<OrbitDragArea>().orbit = orbit;
             Label("PICKDOLL", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-85), new Vector2(520,78), 48, TextAnchor.MiddleLeft);
-            Label(pickup && pickup.PassiveSuspension ? "ANDROID / WEEK 03" : pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
+            Label(pickup && pickup.smoothMotion ? "ANDROID / WEEK 04" : pickup && pickup.PassiveSuspension ? "ANDROID / WEEK 03" : pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
             Button("VIEW", safe, new Vector2(1,1), new Vector2(-115,-85), new Vector2(150,68), () => orbit.NextPreset());
             Label("DRAG TO LOOK AROUND", safe, new Vector2(.5f,1), new Vector2(.5f,1), new Vector2(0,-190), new Vector2(650,40), 20);
             var panel = Rect("Controls", safe, Vector2.zero, new Vector2(1,0), new Vector2(20,20), new Vector2(-20,pickup ? 450 : 330));

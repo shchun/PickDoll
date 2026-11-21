@@ -20,6 +20,19 @@ namespace PickDoll
         public float gripDamping = .06f;
         public float closeAngle = -37;
         public float releaseAngle;
+        public bool smoothMotion;
+        public float loweringSpeed = .28f;
+        public float raisingSpeed = .24f;
+        public float verticalAcceleration = .9f;
+        public float closingRamp = .8f;
+        public float closingDuration = 1.05f;
+        public bool gripVariationEnabled;
+        [Range(0,1)] public float weakGripChance = .25f;
+        public Vector2 weakGripRange = new Vector2(.4f,.65f);
+        public Vector2 normalGripRange = new Vector2(.95f,1.05f);
+        public float CurrentGripScale { get; private set; } = 1;
+        public bool CurrentWeakGrip { get; private set; }
+        private float verticalVelocity;
         public Stage Phase { get; private set; }
         public bool Busy => Phase != Stage.Ready && Phase != Stage.Carry;
         public string Status => Phase switch {
@@ -49,12 +62,16 @@ namespace PickDoll
         public void Press()
         {
             Initialize();
-            if (Phase == Stage.Ready) { elapsed = 0; SetSpring(0); Phase = Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
+            if (Phase == Stage.Ready) {
+                float category = gripVariationEnabled ? Random.value : 1;
+                CurrentWeakGrip = gripVariationEnabled && (weakGripChance >= 1 || category < weakGripChance);
+                CurrentGripScale = EvaluateGrip(category, gripVariationEnabled ? Random.value : .5f);
+                elapsed = 0; verticalVelocity = 0; SetSpring(0); Phase = Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
             else if (Phase == Stage.Carry) { elapsed = 0; Phase = Stage.Opening; }
         }
         public void ResetCycle()
         {
-            Initialize(); height = topHeight; elapsed = 0; Phase = Stage.Ready; SetSpring(0);
+            Initialize(); height = topHeight; verticalVelocity = 0; elapsed = 0; CurrentGripScale = 1; CurrentWeakGrip = false; Phase = Stage.Ready; SetSpring(0);
             var target = new Vector3(machine.carriage.position.x, height, machine.carriage.position.z);
             hub.position = target; hub.rotation = machine.claw.rotation;
             if (PassiveSuspension) {
@@ -79,9 +96,25 @@ namespace PickDoll
         {
             foreach (var finger in fingers)
             {
-                var spring = finger.spring; spring.spring = gripStiffness; spring.damper = gripDamping;
+                float forceScale = Phase == Stage.Closing || Phase == Stage.Raising || Phase == Stage.Carry ? CurrentGripScale : 1;
+                var spring = finger.spring; spring.spring = gripStiffness * forceScale; spring.damper = gripDamping * Mathf.Sqrt(forceScale);
                 spring.targetPosition = target; finger.spring = spring; finger.useSpring = true;
             }
+        }
+        public float EvaluateGrip(float categoryRoll, float strengthRoll)
+        {
+            if (!gripVariationEnabled) return 1;
+            var range = (weakGripChance >= 1 || categoryRoll < weakGripChance) ? weakGripRange : normalGripRange;
+            return Mathf.Max(.01f, Mathf.Lerp(range.x, range.y, Mathf.Clamp01(strengthRoll)));
+        }
+        private void MoveLift(float target, float speed, float dt)
+        {
+            if (!smoothMotion) { height = Mathf.MoveTowards(height, target, speed * dt); return; }
+            float accel = Mathf.Max(.01f, verticalAcceleration);
+            float approachSpeed = Mathf.Min(speed, Mathf.Sqrt(2 * accel * Mathf.Abs(target-height)));
+            verticalVelocity = Mathf.MoveTowards(verticalVelocity, Mathf.Sign(target-height) * approachSpeed, accel * dt);
+            if (Mathf.Abs(target-height) <= Mathf.Abs(verticalVelocity*dt)) { height = target; verticalVelocity = 0; }
+            else height += verticalVelocity * dt;
         }
         public void Step(float dt)
         {
@@ -89,15 +122,16 @@ namespace PickDoll
             switch (Phase)
             {
                 case Stage.Lowering:
-                    height = Mathf.MoveTowards(height, bottomHeight, .28f * dt);
+                    MoveLift(bottomHeight, loweringSpeed, dt);
                     if (height <= bottomHeight) { Phase = Stage.Closing; elapsed = 0; }
                     break;
                 case Stage.Closing:
-                    SetSpring(Mathf.Lerp(0, closeAngle, Mathf.Clamp01(elapsed / .8f)));
-                    if (elapsed >= 1.05f) { Phase = Stage.Raising; elapsed = 0; }
+                    float progress = Mathf.Clamp01(elapsed / closingRamp);
+                    SetSpring(Mathf.Lerp(0, closeAngle, smoothMotion ? Mathf.SmoothStep(0,1,progress) : progress));
+                    if (elapsed >= closingDuration) { Phase = Stage.Raising; elapsed = 0; }
                     break;
                 case Stage.Raising:
-                    height = Mathf.MoveTowards(height, topHeight, .24f * dt);
+                    MoveLift(topHeight, raisingSpeed, dt);
                     if (height >= topHeight) { Phase = Stage.Carry; elapsed = 0; machine.ReleaseControls(); }
                     break;
                 case Stage.Opening:

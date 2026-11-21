@@ -71,6 +71,6 @@ Windows에서는 실행할 때 약 34초 길이의 오리지널 벨 멜로디가
 
 ## Android / Unity 프로토타입
 
-Unity 6.5 기반 모바일 버전의 1주차 작업. 기계·이동·회전·미세 조작·드래그 시점을 구현했다. 실제 집기 물리는 2주차에 진행한다.
+Unity 6.5 기반 Android 인형뽑기 프로토타입. 접촉 물리 집기·운반·놓기, 하강 중 미세 조정과 관성 회전을 구현했다. 4주차에는 구석 집기 형상·속도·감쇠와 그립 변동을 안정화했다. 자동 복귀·배출·획득은 5주차 작업이다.
 
-[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Android 2주차 결과 보고서](android-week-2-results.html) · [Android 3주차 작업 결과](android-week-3-results.html) · [Unity 실행 안내](Unity/README.md)
+[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Android 2주차 결과 보고서](android-week-2-results.html) · [Android 3주차 작업 결과](android-week-3-results.html) · [Android 4주차 안정화 결과](android-week-4-results.html) · [Unity 실행 안내](Unity/README.md)
