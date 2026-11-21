@@ -1,0 +1,11 @@
+param([Parameter(Mandatory=$true)][string]$Serial)
+$ErrorActionPreference = 'Stop'
+$apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Android\PickDoll-week01.apk'))
+if (-not (Test-Path -LiteralPath $apkPath)) { throw 'Build the Android APK first.' }
+$adbCommand = Get-Command adb -ErrorAction Stop
+$deviceState = & $adbCommand.Source -s $Serial get-state 2>&1
+if ($LASTEXITCODE -ne 0 -or (@($deviceState | ForEach-Object { $_.ToString().Trim() }) -notcontains 'device')) { throw 'The selected device must be connected and USB debugging authorized on the phone.' }
+& $adbCommand.Source -s $Serial install -r $apkPath
+if ($LASTEXITCODE -ne 0) { throw 'APK install failed.' }
+& $adbCommand.Source -s $Serial shell monkey -p com.precipi.pickdoll -c android.intent.category.LAUNCHER 1
+if ($LASTEXITCODE -ne 0) { throw 'App launch failed.' }
