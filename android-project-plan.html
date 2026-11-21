@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PickDoll Android · 제작 계획서</title>
+<style>
+:root{color-scheme:light;--bg:#f7f3f5;--ink:#302733;--muted:#665b69;--accent:#97375d;--line:#e4d5dd;--paper:#fff;--soft:#f8e8ef}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 "Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all;overflow-wrap:anywhere}main{max-width:1100px;margin:auto;padding:40px 24px 64px}header{padding:44px;border-radius:24px;background:#322539;color:white;position:relative;overflow:hidden}header:after{content:"✦";position:absolute;right:30px;top:5px;font-size:160px;color:#76516f;opacity:.35;pointer-events:none}.eyebrow{font-size:13px;letter-spacing:.12em;font-weight:bold;color:#efb7cf}h1{font-size:clamp(32px,6vw,56px);line-height:1.25;letter-spacing:-.05em;margin:12px 0 18px}header p{max-width:660px;color:#efdeea;position:relative;z-index:1}.meta{font-size:13px}nav{display:flex;gap:10px 22px;flex-wrap:wrap;margin:24px 0}a{color:var(--accent);text-underline-offset:4px}section{margin-top:38px;scroll-margin-top:22px}h2{font-size:25px;letter-spacing:-.04em;margin:0 0 14px}h3{font-size:18px;margin:0 0 8px}p{margin:8px 0 12px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--paper)}.card p:last-child{margin-bottom:0}.number{display:block;font-size:30px;font-weight:bold;color:var(--accent);line-height:1.3}.muted{color:var(--muted)}.note{padding:16px 20px;background:var(--soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;margin:16px 0}.tag{display:inline-block;font-size:12px;border-radius:30px;padding:2px 10px;background:var(--soft);color:var(--accent);font-weight:bold}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:white}table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f2e8ee}tr:last-child td{border-bottom:0}ul,ol{padding-left:23px;margin:8px 0}li+li{margin-top:5px}.flow{display:flex;gap:8px;flex-wrap:wrap;list-style:none;padding:0}.flow li{padding:8px 14px;background:#eee6f0;border-radius:8px;margin:0}.two{grid-template-columns:repeat(2,minmax(0,1fr))}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:18px;font-size:13px;color:var(--muted)}.print{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;padding:9px 14px;cursor:pointer;font:inherit}details{border:1px solid var(--line);padding:14px 18px;border-radius:12px;background:white;margin-top:12px}summary{cursor:pointer;font-weight:bold}
+@media(max-width:720px){main{padding:20px 16px 40px}header{padding:26px}.grid,.two{grid-template-columns:1fr}header:after{font-size:110px;right:8px}h2{font-size:23px}}
+@media print{body{background:white;font-size:11pt}main{max-width:none;padding:0}header{background:#eee!important;color:#222;padding:22px}header p,.eyebrow{color:#333}header:after,nav,.print{display:none}section{margin-top:24px}h2,h3{break-after:avoid}.card,tr,details{break-inside:avoid}.table-wrap{overflow:visible}table{min-width:0}.grid{gap:8px}a{color:#333}footer{font-size:9pt}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">PICKDOLL / ANDROID EDITION</div>
+<h1>손안의 인형뽑기,<br>수집이 이어지는 게임으로.</h1>
+<p>기존 프로토타입의 조작 감각을 Unity로 다시 만들고, 서로 다른 인형을 뽑아 도감을 채우며 누적 수집 업적을 달성한다.</p>
+<p class="meta">제작 계획 v1.0 · 2026년 11월 21일 · 상태: 1주차 완료 / S26·폴드5·갤럭시 탭 확인<br>주당 6시간 · 유료 에셋 구매 없음 · APK 지인 테스트 → Google Play 출시</p>
+</header>
+<nav aria-label="문서 목차"><a href="android-week-1-results.html">1주차 작업 결과</a><a href="#scope">목표와 범위</a><a href="#toys">인형 구성</a><a href="#tech">기술 설계</a><a href="#save">업적과 저장</a><a href="#schedule">제작 일정</a><a href="#quality">완료 기준</a><a href="#start">첫 주 작업</a></nav>
+<div class="grid">
+<div class="card"><span class="number">12종</span><p>동물 6종 + 음식·사물 6종<br><span class="muted">종수와 구성은 초안</span></p></div>
+<div class="card"><span class="number">4주</span><p>첫 지인 테스트 APK 목표<br><span class="muted">누적 작업 약 24시간</span></p></div>
+<div class="card"><span class="number">12–14주</span><p>출시 후보 제작 예상<br><span class="muted">72–84시간 / 심사 대기 별도</span></p></div>
+</div>
+<section id="scope"><h2>01. 목표와 첫 버전 범위</h2>
+<p>광고나 결제 없이도 반복해서 즐길 수 있는 작은 3D 인형뽑기 게임을 만든다. 목표는 기존 화면을 복제하는 데 그치지 않고, 인형의 모양과 집는 감각이 다른 수집 게임으로 발전시키는 것이다.</p>
+<div class="table-wrap"><table><thead><tr><th>항목</th><th>계획</th><th>결정 상태</th></tr></thead><tbody>
+<tr><td>플랫폼·엔진</td><td>Android / Unity로 새로 제작</td><td>확정</td></tr>
+<tr><td>수익화</td><td>첫 버전 광고·결제 없음. 유료 에셋 구매 없음</td><td>확정</td></tr>
+<tr><td>핵심 기능</td><td>뽑기, 누적 획득 업적, 간단한 도감</td><td>확정</td></tr>
+<tr><td>계정·복원</td><td>비로그인 플레이 가능. Google Play Games 연동 시 업적·클라우드 복원</td><td>확정</td></tr>
+<tr><td>기존 조작 계승</td><td>기계 정면 기준 이동, 미세 이동, 집게 회전, 자유 시점, 상단 이동 장치 기준 조준원</td><td>계획에 반영</td></tr>
+<tr><td>판 구성</td><td>한 판에 7개 랜덤 배치, 새 판에서 재배치, 횟수 제한 없음</td><td>초안</td></tr>
+<tr><td>화면·언어</td><td>세로 화면 우선, 한국어 우선, 폴더블 화면 대응</td><td>초안</td></tr>
+<tr><td>보류 기능</td><td>랭킹, 일일 미션, 복수 기계, 연체 물리, iOS, 앱 내 실제 경품</td><td>첫 버전 제외</td></tr>
+</tbody></table></div>
+<p class="note">계획 확정은 구현 완료를 뜻하지 않는다. Unity 버전·Android SDK·플러그인 조합은 첫 주에 호환성을 확인해 고정한다. 공개 출시일은 아직 정하지 않았다.</p>
+</section>
+<section id="toys"><h2>02. 인형은 색보다 형태를 다양하게</h2>
+<p>단순한 얼굴 교체보다 실루엣 차이를 우선한다. 아래 12종은 제작 후보이며, 3종 시제품으로 집기와 작업량을 확인한 뒤 최종 구성한다.</p>
+<div class="grid two"><div class="card"><h3>동물 후보 6종</h3><p>토끼 · 곰 · 고양이 · 펭귄 · 물개 · 가오리</p><p class="muted">긴 귀와 몸통, 둥근 몸체, 짧은 팔다리, 길쭉한 몸, 납작한 날개 등으로 구분한다.</p></div><div class="card"><h3>음식·사물 후보 6종</h3><p>딸기 · 도넛 · 식빵 · 푸딩 · 별 · 쿠션</p><p class="muted">원뿔형, 고리형, 납작한 사각형, 둥근 밑면, 돌출부가 있는 형태를 조합한다.</p></div></div>
+<ul><li>자체 캐릭터로 제작하며 유명 캐릭터의 외형은 사용하지 않는다.</li><li>형태에 맞는 단순 충돌체와 질량 배분을 설계한다. 모든 인형에 동일한 무게중심을 적용하지 않는다.</li><li>난이도는 외형·무게중심·마찰·크기의 조합으로 조정한다. 특정 종류가 사실상 획득 불가능해지지 않게 시험한다.</li><li>푹신함은 천 재질, 둥근 모델, 가벼운 눌림·복원 연출로 표현한다. 실제 접촉은 강체 물리로 시작한다.</li><li>도넛처럼 구멍이 있는 인형은 단일 볼록 충돌체로 구멍을 막지 않도록 여러 충돌체로 구성한다.</li></ul>
+</section>
+<section id="tech"><h2>03. Unity 기술 설계</h2>
+<div class="grid two"><div class="card"><h3>게임과 물리</h3><ul><li>Unity + URP 기반 모바일 3D 렌더링</li><li>Rigidbody·Collider·Joint로 집게와 인형 구현</li><li>이동 → 하강 → 닫기 → 상승 → 복귀 → 배출 상태 분리</li><li>관성 흔들림과 약한 그립을 조절 가능한 설정으로 관리</li><li>조준원은 상단 이동 장치의 수직 아래 표시</li></ul></div><div class="card"><h3>콘텐츠와 앱 기능</h3><ul><li>인형 ID·표시 이름·물리 설정·모델을 데이터로 분리</li><li>게임 상태와 UI, 저장·서비스 연동을 분리</li><li>로컬 저장은 버전 필드와 원자적 파일 교체·백업 적용</li><li>Google Play Games 공식 Unity 플러그인 연동</li><li>APK로 초기 배포, Play 테스트·출시에는 AAB 사용</li></ul></div></div>
+<p class="note"><strong>가장 큰 선행 검증:</strong> 기존 MuJoCo의 접촉과 집기 감각이 Unity 물리에서 그대로 재현되지는 않는다. 첫 2주에 기본 인형을 집고 운반하는 시제품을 검증한다. 불안정하면 콘텐츠 제작 전에 집게 구조·충돌체·물리 설정을 조정하고 일정을 다시 산정한다.</p>
+<p>기존의 조작·상태 전환·음원·미술 방향은 참고하고, 물리와 렌더링 코드는 Unity에 맞춰 새로 구현한다. 새 프로젝트는 기존 Python·웹 버전과 분리해 <code>PickDoll/Unity/</code>에 두는 안을 기본으로 한다. 이번 문서 작성에서는 Unity 프로젝트를 생성하지 않는다.</p>
+</section>
+<section id="save"><h2>04. 수집·업적·도감·클라우드 저장</h2>
+<ol class="flow"><li>배출 완료 확인</li><li>획득 이벤트 1회 기록</li><li>로컬 저장</li><li>도감 갱신</li><li>로그인 상태에서 동기화·업적 반영</li></ol>
+<div class="table-wrap"><table><thead><tr><th>업적 후보</th><th>조건</th><th>판정</th></tr></thead><tbody>
+<tr><td>첫 친구</td><td>누적 1개</td><td rowspan="6">여러 판에 걸친 성공 획득 합계.<br>동일 종류를 반복 획득해도 증가.<br>올려 잡은 것만으로는 증가하지 않음.</td></tr>
+<tr><td>작은 수집가</td><td>누적 10개</td></tr><tr><td>수집의 시작</td><td>누적 20개</td></tr><tr><td>뽑기의 달인</td><td>누적 50개</td></tr><tr><td>인형 백화점</td><td>누적 100개</td></tr><tr><td>수집 전문가</td><td>누적 200개</td></tr>
+</tbody></table></div>
+<p class="muted">10·20·50개 기준은 사용자 확정. 1·100·200개와 업적 이름은 제안이며, 업적 ID·아이콘은 구현 시 등록한다.</p>
+<div class="grid two"><div class="card"><h3>획득과 도감</h3><ul><li>배출 경로를 거쳐 최종 배출 확인 지점에 도달하면 획득</li><li>배출 감지의 중복 콜백·앱 재실행으로 같은 인형을 재집계하지 않음</li><li>도감은 미획득 실루엣, 이름, 획득 수, 모델 회전 미리보기 제공</li><li>새 판은 현재 인형만 초기화하고 누적 기록은 유지</li><li>중단된 판은 첫 버전에서 재구성하며, 완료된 획득 기록을 보존</li></ul></div><div class="card"><h3>로그인과 동기화</h3><ul><li>인증 실패·취소·오프라인이어도 게임 진행 가능</li><li>기기 내 게스트 기록은 자동 저장. 클라우드 반영 전 삭제·분실 시 복원 보장 불가</li><li>Google 연동 후 Saved Games에 누적·종류별 기록 저장</li><li>업적 상태 자체를 수집 기록의 원본으로 사용하지 않음</li><li>오프라인 업적은 기록에서 재계산해 연동 후 반영</li></ul></div></div>
+<details open><summary>두 기기 사용과 기록 충돌 처리</summary><p>S26 울트라와 폴드5가 같은 기록을 내려받은 뒤 각각 플레이해도 기존 획득을 두 번 더하면 안 된다. 제안 설계는 저장 계정에 속한 각 설치의 기여 카운터를 종류별로 관리하고, 같은 설치 항목은 최댓값으로 병합한 뒤 합계를 계산하는 방식이다. 새 설치에는 새 ID를 부여하고 스키마 버전을 저장한다.</p><p>게스트 기록을 기존 클라우드 계정에 연결할 때는 양쪽 기록과 처리 결과를 보여준다. 이미 연결한 게스트 기록을 재연결해 중복 수입하지 않도록 식별자를 보존한다. 다른 Google 계정으로 바꾸면 저장 영역을 분리한다. 세부 병합 규칙은 9주차에 복사·재설치·계정 변경 시험을 통해 확정한다.</p></details>
+</section>
+<section id="schedule"><h2>05. 주당 6시간 제작 일정</h2>
+<p>매주 구현 4시간 + 실기기 검증·수정 1시간 + 기록·다음 작업 준비 1시간을 기본으로 한다. 아래 기간은 추정이며, 특히 인형 모델 제작과 물리 튜닝에 따라 변동한다.</p>
+<div class="table-wrap"><table><thead><tr><th>주차</th><th>작업 / 각 주 6시간</th><th>완료 조건</th></tr></thead><tbody>
+<tr><td>1주 <span class="tag">완료</span></td><td>Unity·Android 환경, 프로젝트 구조, 기본 기계·터치 입력, Play 연동 설정 요구사항 확인</td><td>두 기기에 빈 게임 APK 설치·실행</td></tr>
+<tr><td>2주</td><td>집게 이동·하강·닫힘·접촉·흔들림, 임시 인형</td><td>기본 인형 집기·상승·운반 검증. 물리 진행 여부 결정</td></tr>
+<tr><td>3주</td><td>자동 사이클, 배출구, 중복 없는 획득, 미세 이동·회전·시점</td><td>한 사이클 반복 실행과 실패 후 복귀</td></tr>
+<tr><td>4주</td><td>임시 인형 3종, 기본 UI, 로컬 저장, 첫 APK 배포</td><td>지인이 설치해 조작·집기·획득 가능</td></tr>
+<tr><td>5주</td><td>동물 모델·재질·충돌체 제작</td><td>동물 후보 6종의 형태 구분과 집기 확인</td></tr>
+<tr><td>6주</td><td>음식·사물 제작, 형태별 난이도 튜닝</td><td>총 12종 후보 검증. 부족하면 출시 종수 조정</td></tr>
+<tr><td>7주</td><td>도감·종류별 집계·미리보기·저장 마이그레이션</td><td>재실행·새 판 후 획득 기록 유지</td></tr>
+<tr><td>8주</td><td>Play Games 인증·업적·테스트 계정·서명 설정</td><td>테스트 계정 업적 달성, 게스트 플레이 유지</td></tr>
+<tr><td>9주</td><td>Saved Games·복원·오프라인 재시도·충돌 처리</td><td>두 기기 교차 플레이와 재설치 복원 시험 통과</td></tr>
+<tr><td>10주</td><td>조명·천 재질・음원·효과·폴더블 UI</td><td>외부 화면·내부 화면·접힘 전환 조작 가능</td></tr>
+<tr><td>11주</td><td>발열·성능·중단 복귀·장시간 실행·버그 수정</td><td>두 기기 플레이 검증, 주요 오류 해결</td></tr>
+<tr><td>12주</td><td>출시 후보 AAB, 스토어 이미지·설명·정책 항목·내부 테스트</td><td>Play 테스트 트랙에서 설치·인증·업적 확인</td></tr>
+<tr><td>13–14주</td><td>피드백 수정·난이도·최종 검증 여유</td><td>출시 신청 가능한 빌드와 배포 자료 준비</td></tr>
+</tbody></table></div>
+<p class="note">첫 APK까지 24시간, 출시 후보까지 총 72–84시간을 예상한다. 모델 직접 제작이 이 시간을 넘기면 품질을 낮추기보다 출시 인형 수를 줄이거나 기간을 늘린다. Play 심사·계정별 요구사항 처리 대기는 별도다.</p>
+</section>
+<section id="quality"><h2>06. 실기기 시험과 출시 조건</h2>
+<div class="grid two"><div class="card"><h3>게임·기기</h3><ul><li>S26 울트라·폴드5에서 60fps 목표. 실측 후 품질 단계 조정</li><li>폴드5 외부·내부 화면과 실행 중 접기·펼치기 대응</li><li>인형별 집기·탈락·구석·유리벽·배출구 끼임 검증</li><li>가속할 때 집게는 흔들리고 조준원은 안정적으로 표시</li><li>앱 전환·화면 잠금·종료·재실행 후 조작 복구</li><li>장시간 플레이 중 발열과 프레임 저하 확인</li></ul></div><div class="card"><h3>기록·서비스</h3><ul><li>9→10, 19→20, 49→50 경계에서 업적 판정</li><li>중복 배출 감지·재시도에서도 획득 수 유지</li><li>비로그인 플레이 후 로그인·오프라인 후 재연결</li><li>두 기기 동시 진행·순서가 뒤바뀐 저장 병합</li><li>클라우드 저장 후 재설치해 복원</li><li>계정 변경 시 다른 사람의 기록과 섞이지 않음</li></ul></div></div>
+<p>오래된 개인 개발자 계정을 보유하고 있으므로 신규 개인 계정용 테스트 요건은 원칙적으로 대상이 아닌 것으로 계획한다. 실제 계정의 제작 액세스·정책 상태는 Play Console에서 확인한다. 신규 개인 계정의 12명·14일 요건과 별개로 지인 테스트와 Play 내부 테스트는 진행한다.</p>
+<p>출시 전 패키지명·앱 이름·서명 키 보관, Play App Signing·테스트/출시 인증서 설정, 대상 API 및 Android 호환 요구사항, 콘텐츠 등급·타깃 연령·데이터 보안·개인정보처리방침·에셋 권리·Play Games 리소스 공개 상태를 확인한다. 출시 시점의 정책을 다시 점검한다.</p>
+</section>
+<section><h2>07. 비용·리스크·결정 사항</h2>
+<div class="table-wrap"><table><thead><tr><th>항목</th><th>계획</th></tr></thead><tbody>
+<tr><td>유료 에셋</td><td>구매 0원. 모델·캐릭터·UI는 자체 제작하고 기존 자체 합성 음원 활용</td></tr>
+<tr><td>도구·서비스</td><td>Unity 사용 자격·라이선스와 서비스 조건 확인. 별도 자체 서버 없이 시작하며 총 운영비 0원을 보장하지는 않음</td></tr>
+<tr><td>물리 감각 변경</td><td>2주차 선행 검증. MuJoCo와 동일한 결과보다 재미와 제어 안정성을 기준으로 판단</td></tr>
+<tr><td>인형 제작량</td><td>3종 시제품 → 12종 확대. 자체 제작 시간 부족 시 종수·일정 재조정</td></tr>
+<tr><td>출시 전 추가 확정</td><td>앱 표시 이름·패키지명, 타깃 연령·배포 국가, 최종 인형 목록·업적 이름, 스토어 공개일</td></tr>
+</tbody></table></div>
+</section>
+<section id="start"><h2>08. 바로 시작할 1주차 작업</h2>
+<div class="table-wrap"><table><thead><tr><th>시간</th><th>작업</th><th>산출물</th></tr></thead><tbody>
+<tr><td>1시간</td><td>Unity·Android 빌드 환경, 버전·플러그인 호환성 확인</td><td>버전 목록과 실행 환경 기록</td></tr>
+<tr><td>1시간</td><td>프로젝트 생성, 폴더·씬·Git 설정,앱 식별자 임시 지정</td><td>Unity 프로젝트 기본 구조</td></tr>
+<tr><td>2시간</td><td>단순 기계·바닥·집게 이동 장치·임시 인형과 터치 입력</td><td>기본 씬과 이동 조작</td></tr>
+<tr><td>1시간</td><td>APK 빌드, 두 기기 설치, 화면 비율 확인</td><td>실행 가능한 초기 APK</td></tr>
+<tr><td>1시간</td><td>문제 수정·스크린샷·2주차 물리 검증 항목 작성</td><td>1주차 결과와 다음 작업 목록</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>참고 문서</h2><ul>
+<li><a href="https://developer.android.com/games/pgs/unity/overview">Google Play Games Unity 플러그인</a> — 인증·업적·Saved Games 연동</li>
+<li><a href="https://developer.android.com/games/pgs/savedgames">Google Play Games 클라우드 저장</a> — 게스트·계정·충돌 처리</li>
+<li><a href="https://support.google.com/googleplay/android-developer/answer/14151465?hl=ko">개인 개발자 계정의 앱 테스트 요건</a> — 계정 생성 시기에 따른 적용 범위</li>
+</ul></section>
+<footer><p>PickDoll Android 제작 계획 v1.0 · 사용자와 합의한 요구사항에 기반한 실행 계획. 수치·일정·콘텐츠 후보는 검증 결과에 따라 갱신한다.</p><button class="print" onclick="window.print()">인쇄 / PDF 저장</button></footer>
+</main></body></html>

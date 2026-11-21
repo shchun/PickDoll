@@ -6,7 +6,7 @@ MuJoCo로 만든 40cm 인형뽑기 프로토타입. 3주차 버전에서는 조�
 
 ![외형을 완성한 PickDoll에서 인형을 집어 상품 출구로 배출하는 장면](week-3-machine.gif)
 
-[3주차 결과 보고서](week-3-results.html) · [2주차 결과 보고서](week-2-results.html) · [제작 계획서](mujoco-claw-project-plan.html) · [1주차 결과](week-1-results.html)
+[3주차 결과 보고서](week-3-results.html) · [2주차 결과 보고서](week-2-results.html) · [제작 계획서](mujoco-claw-project-plan.html) · [안드로이드 제작 계획서](android-project-plan.html) · [1주차 결과](week-1-results.html)
 
 ## Windows에서 실행
 
@@ -68,3 +68,9 @@ Windows에서는 실행할 때 약 34초 길이의 오리지널 벨 멜로디가
 - 바닥 면적 30 × 30cm의 실물 제품 검토하기
 
 [Further idea 상세](week-3-results.html#further-idea)에 재사용 범위, 검토 사항과 실물 크기 가정을 정리했다. 후속 제작과 일정은 추후 정한다.
+
+## Android / Unity 프로토타입
+
+Unity 6.5 기반 모바일 버전의 1주차 작업. 기계·이동·회전·미세 조작·드래그 시점을 구현했다. 실제 집기 물리는 2주차에 진행한다.
+
+[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Unity 실행 안내](Unity/README.md)

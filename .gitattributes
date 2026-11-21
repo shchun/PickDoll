@@ -1,0 +1,5 @@
+Unity/**/*.meta whitespace=-trailing-space
+Unity/**/*.asset whitespace=-trailing-space
+Unity/**/*.unity whitespace=-trailing-space
+Unity/**/*.wlt whitespace=-trailing-space
+Unity/**/*.mat whitespace=-trailing-space
