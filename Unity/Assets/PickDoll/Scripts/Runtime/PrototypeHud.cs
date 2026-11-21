@@ -36,7 +36,7 @@ namespace PickDoll
             drag.gameObject.AddComponent<Image>().color = Color.clear;
             drag.gameObject.AddComponent<OrbitDragArea>().orbit = orbit;
             Label("PICKDOLL", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-85), new Vector2(520,78), 48, TextAnchor.MiddleLeft);
-            Label(pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
+            Label(pickup && pickup.PassiveSuspension ? "ANDROID / WEEK 03" : pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
             Button("VIEW", safe, new Vector2(1,1), new Vector2(-115,-85), new Vector2(150,68), () => orbit.NextPreset());
             Label("DRAG TO LOOK AROUND", safe, new Vector2(.5f,1), new Vector2(.5f,1), new Vector2(0,-190), new Vector2(650,40), 20);
             var panel = Rect("Controls", safe, Vector2.zero, new Vector2(1,0), new Vector2(20,20), new Vector2(-20,pickup ? 450 : 330));
@@ -47,8 +47,10 @@ namespace PickDoll
             Hold(Button("LEFT",panel,new Vector2(.25f,.5f),new Vector2(-122,-13),new Vector2(115,66)),Vector2.left);
             Hold(Button("RIGHT",panel,new Vector2(.25f,.5f),new Vector2(122,-13),new Vector2(115,66)),Vector2.right);
             var fine = Button("PRECISION: OFF",panel,new Vector2(.75f,.5f),new Vector2(0,58),new Vector2(290,66),()=>machine.ToggleFine()); mode=fine.GetComponentInChildren<Text>();
+            if (!pickup || !pickup.PassiveSuspension) {
             Hold(Button("TURN L",panel,new Vector2(.75f,.5f),new Vector2(-76,-13),new Vector2(138,66)),Vector2.zero,-1);
             Hold(Button("TURN R",panel,new Vector2(.75f,.5f),new Vector2(76,-13),new Vector2(138,66)),Vector2.zero,1);
+            } else Label("PASSIVE SWING",panel,new Vector2(.75f,.5f),new Vector2(.75f,.5f),new Vector2(0,-13),new Vector2(290,50),20);
             Button("RESET",panel,new Vector2(.75f,.5f),new Vector2(0,-84),new Vector2(290,66),()=>machine.ResetPosition());
             if (pickup) grab = Button("GRAB",panel,new Vector2(.5f,0),new Vector2(0,55),new Vector2(760,56),()=>pickup.Press()).GetComponent<Button>();
             Label(pickup ? "GRAB / CARRY / OPEN — PHYSICS PROTOTYPE" : "MOVEMENT PROTOTYPE  /  PICKUP COMES IN WEEK 02",panel,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,pickup ? 12 : 25),new Vector2(790,pickup ? 20 : 30),16);

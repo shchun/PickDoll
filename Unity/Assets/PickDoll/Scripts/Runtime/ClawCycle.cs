@@ -10,15 +10,20 @@ namespace PickDoll
         public HingeJoint[] fingers;
         public Rigidbody[] prizes;
         public Transform cable;
+        public Rigidbody suspensionAnchor;
+        public float suspensionLength = .14f;
+        public bool PassiveSuspension => suspensionAnchor != null;
+        public bool CanMove => !Busy || (PassiveSuspension && Phase == Stage.Lowering);
         public float topHeight = 1.83f;
         public float bottomHeight = 1.42f;
         public float gripStiffness = 1.5f;
         public float gripDamping = .06f;
         public float closeAngle = -37;
+        public float releaseAngle;
         public Stage Phase { get; private set; }
         public bool Busy => Phase != Stage.Ready && Phase != Stage.Carry;
         public string Status => Phase switch {
-            Stage.Lowering => "LOWERING", Stage.Closing => "CLOSING",
+            Stage.Lowering => PassiveSuspension ? "LOWERING / MOVE TO ADJUST" : "LOWERING", Stage.Closing => "CLOSING",
             Stage.Raising => "RAISING", Stage.Carry => "MOVE TO CARRY / OPEN TO RELEASE",
             Stage.Opening => "OPENING", _ => "AIM, THEN GRAB"
         };
@@ -40,11 +45,11 @@ namespace PickDoll
             height = topHeight; Phase = Stage.Ready;
             SetSpring(0);
         }
-        private void Awake() { Initialize(); }
+        private void Awake() { if (PassiveSuspension) Time.fixedDeltaTime = .01f; Initialize(); }
         public void Press()
         {
             Initialize();
-            if (Phase == Stage.Ready) { elapsed = 0; Phase = Stage.Lowering; machine.ReleaseControls(); }
+            if (Phase == Stage.Ready) { elapsed = 0; SetSpring(0); Phase = Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
             else if (Phase == Stage.Carry) { elapsed = 0; Phase = Stage.Opening; }
         }
         public void ResetCycle()
@@ -52,6 +57,10 @@ namespace PickDoll
             Initialize(); height = topHeight; elapsed = 0; Phase = Stage.Ready; SetSpring(0);
             var target = new Vector3(machine.carriage.position.x, height, machine.carriage.position.z);
             hub.position = target; hub.rotation = machine.claw.rotation;
+            if (PassiveSuspension) {
+                suspensionAnchor.position = target + Vector3.up * suspensionLength;
+                hub.linearVelocity = Vector3.zero; hub.angularVelocity = Vector3.zero;
+            }
             for (int i = 0; i < fingers.Length; i++)
             {
                 var body = fingers[i].GetComponent<Rigidbody>();
@@ -62,7 +71,7 @@ namespace PickDoll
             for (int i = 0; i < prizes.Length; i++)
             {
                 prizes[i].position = prizePositions[i]; prizes[i].rotation = prizeRotations[i];
-                prizes[i].linearVelocity = Vector3.zero; prizes[i].angularVelocity = Vector3.zero; prizes[i].WakeUp();
+                if (!prizes[i].isKinematic) { prizes[i].linearVelocity = Vector3.zero; prizes[i].angularVelocity = Vector3.zero; prizes[i].WakeUp(); }
             }
             Physics.SyncTransforms();
         }
@@ -92,12 +101,13 @@ namespace PickDoll
                     if (height >= topHeight) { Phase = Stage.Carry; elapsed = 0; machine.ReleaseControls(); }
                     break;
                 case Stage.Opening:
-                    SetSpring(Mathf.Lerp(closeAngle, 0, Mathf.Clamp01(elapsed / .55f)));
-                    if (elapsed >= .7f) { Phase = Stage.Ready; elapsed = 0; }
+                    SetSpring(Mathf.Lerp(closeAngle, releaseAngle, Mathf.Clamp01(elapsed / .55f)));
+                    if (elapsed >= (PassiveSuspension ? 1.1f : .7f)) { SetSpring(0); Phase = Stage.Ready; elapsed = 0; }
                     break;
             }
-            hub.MovePosition(new Vector3(machine.carriage.position.x, height, machine.carriage.position.z));
-            hub.MoveRotation(machine.claw.rotation);
+            var target = new Vector3(machine.carriage.position.x, height, machine.carriage.position.z);
+            if (PassiveSuspension) suspensionAnchor.MovePosition(target + Vector3.up * suspensionLength);
+            else { hub.MovePosition(target); hub.MoveRotation(machine.claw.rotation); }
         }
         private void FixedUpdate() { if (!paused) Step(Time.fixedDeltaTime); }
         private void LateUpdate()
@@ -106,6 +116,7 @@ namespace PickDoll
             var top = machine.carriage.position - Vector3.up * .02f;
             var bottom = hub.position + Vector3.up * .02f;
             cable.position = (top + bottom) * .5f;
+            cable.rotation = Quaternion.FromToRotation(Vector3.up, top - bottom);
             cable.localScale = new Vector3(.009f, Mathf.Max(.01f, Vector3.Distance(top, bottom) * .5f), .009f);
         }
         private void OnApplicationPause(bool value) { paused = value; if (value) machine.ReleaseControls(); }
