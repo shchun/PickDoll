@@ -3,3 +3,4 @@ Unity/**/*.asset whitespace=-trailing-space
 Unity/**/*.unity whitespace=-trailing-space
 Unity/**/*.wlt whitespace=-trailing-space
 Unity/**/*.mat whitespace=-trailing-space
+Unity/**/*.physicMaterial whitespace=-trailing-space

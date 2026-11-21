@@ -56,3 +56,18 @@ S26 울트라와 폴드5 각각에서 시작·종료·재실행, 네 방향 이�
 S26 울트라와 폴드5에 0.1.0(code 1) 개발용 APK를 설치·실행했다. S26은 화면 캡처 및 사용자 정상 이동 피드백을 확인했고, 폴드5도 정상 동작 피드백을 받았다. 폴드5는 접고 펼친 뒤에도 버튼 배치·이동·드래그가 정상이라는 사용자 확인을 받았다. 추가로 갤럭시 탭 SM-X820에도 동일 APK를 설치하고 화면·정상 동작 피드백을 확인했다.
 
 시작 로그에는 Google Play Asset Delivery의 AssetPackManager 클래스 누락 오류가 기록된다. 현재 앱은 자산 분할 다운로드를 사용하지 않고 화면·이동은 정상 확인했지만, 로그 오류가 없는 상태로 간주하지 않는다. 공개 출시 전 엔진 버전·배포 설정과 원인을 재검증한다. Google Play Games 업적 연동과는 별도 기능이다.
+
+
+## 2주차 집기 물리 프로토타입
+
+`Assets/PickDoll/Scenes/Week02.unity`에서 100g 임시 곰 3개를 관절·접촉·마찰로 집는다. 방향 이동 → GRAB(Enter/Space) → 자동 하강·닫힘·상승 → 수동 운반 → OPEN 순서다. RESET(R)은 인형과 집게를 초기화한다. 인형을 집게에 붙이는 고정 조인트는 사용하지 않는다.
+
+- `tools/Run-Unity.ps1 -Week 2 -Task Generate|Validate|Windows|Android`
+- Windows: `Builds/Week02/Windows/PickDoll.exe`
+- Android: `Builds/Week02/Android/PickDoll-week02.apk` (0.2.0 / code 2)
+- 설치: `tools/Install-Apk.ps1 -Week 2 -Serial <adb기기번호>`
+- Windows 실행 검증: EXE에 `--pickdoll-week02-test` 인자를 주면 실제 플레이어 물리 검사 후 종료한다. 결과·스크린샷은 실행 파일 옆 `Checks/`에 생성한다.
+
+정렬한 3개 인형의 집기·기본 속도 운반·놓기, 동작 중 초기화와 빈 공간 집기를 검증했다. 약한 힘은 관찰 조건이며 강제 낙하를 요구하지 않는다. 갤럭시 탭 설치·실행은 완료했으며 실제 터치 집기 사용자 확인은 대기 중이다. 자세한 수치와 화면은 [2주차 보고서](../android-week-2-results.html)에 있다.
+
+수집함·획득 판정·저장은 아직 없다. 하강 중 이동, 수동 회전 제거와 관성 회전, 집게 디자인 개선, 구석 인형 집기는 3주차 시작 시 다시 검토·적용한다.

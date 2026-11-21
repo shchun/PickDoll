@@ -29,9 +29,11 @@ namespace PickDoll
             carriage.localPosition = new Vector3(0, carriage.localPosition.y, 0);
             if (claw) claw.localRotation = Quaternion.identity;
             UpdateMarker();
+            var cycle = GetComponent<ClawCycle>(); if (cycle) cycle.ResetCycle();
         }
         public void Move(Vector2 direction, float seconds, bool fine)
         {
+            var cycle = GetComponent<ClawCycle>(); if (cycle && cycle.Busy) { AtLimit = false; return; }
             var position = carriage.localPosition;
             var requested = position + new Vector3(direction.x, 0, direction.y) * ((fine ? fineSpeed : speed) * seconds);
             position.x = Mathf.Clamp(requested.x, -travelLimit, travelLimit);
@@ -59,9 +61,11 @@ namespace PickDoll
                 turn += (keyboard.xKey.isPressed ? 1 : 0) - (keyboard.zKey.isPressed ? 1 : 0);
                 fine |= keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
                 if (keyboard.rKey.wasPressedThisFrame) ResetPosition();
+                if (keyboard.enterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame) GetComponent<ClawCycle>()?.Press();
             }
             Move(Vector2.ClampMagnitude(direction, 1), Time.deltaTime, fine);
-            yaw += Mathf.Clamp(turn, -1, 1) * 65 * Time.deltaTime;
+            var pickup = GetComponent<ClawCycle>();
+            if (!pickup || !pickup.Busy) yaw += Mathf.Clamp(turn, -1, 1) * 65 * Time.deltaTime;
             if (claw) claw.localRotation = Quaternion.Euler(0, yaw, 0);
         }
         private void OnApplicationFocus(bool focus) { if (!focus) ReleaseControls(); }
