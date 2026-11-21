@@ -13,6 +13,8 @@ namespace PickDoll
         private Text mode;
         private Text position;
         private Font font;
+        private ClawCycle pickup;
+        private Button grab;
         private Rect lastSafe;
         private int width, height;
         private readonly Color ink = new Color(0.98f, 0.93f, 0.97f);
@@ -20,6 +22,7 @@ namespace PickDoll
         private void Awake()
         {
             Application.targetFrameRate = 60;
+            pickup = machine.GetComponent<ClawCycle>();
             font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             var events = new GameObject("Input Events", typeof(EventSystem), typeof(InputSystemUIInputModule));
             events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
@@ -29,14 +32,14 @@ namespace PickDoll
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(900, 1600); scaler.matchWidthOrHeight = 0.5f;
             safe = Rect("Safe Area", canvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            var drag = Rect("Drag to orbit", safe, Vector2.zero, Vector2.one, new Vector2(0, 335), new Vector2(0, -180));
+            var drag = Rect("Drag to orbit", safe, Vector2.zero, Vector2.one, new Vector2(0, pickup ? 455 : 335), new Vector2(0, -180));
             drag.gameObject.AddComponent<Image>().color = Color.clear;
             drag.gameObject.AddComponent<OrbitDragArea>().orbit = orbit;
             Label("PICKDOLL", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-85), new Vector2(520,78), 48, TextAnchor.MiddleLeft);
-            Label("ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
+            Label(pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
             Button("VIEW", safe, new Vector2(1,1), new Vector2(-115,-85), new Vector2(150,68), () => orbit.NextPreset());
             Label("DRAG TO LOOK AROUND", safe, new Vector2(.5f,1), new Vector2(.5f,1), new Vector2(0,-190), new Vector2(650,40), 20);
-            var panel = Rect("Controls", safe, Vector2.zero, new Vector2(1,0), new Vector2(20,20), new Vector2(-20,330));
+            var panel = Rect("Controls", safe, Vector2.zero, new Vector2(1,0), new Vector2(20,20), new Vector2(-20,pickup ? 450 : 330));
             panel.gameObject.AddComponent<Image>().color = new Color(.16f,.11f,.18f,.96f);
             position = Label("", panel, new Vector2(.5f,1), new Vector2(.5f,1), new Vector2(0,-35), new Vector2(760,38), 19);
             var up = Button("BACK", panel, new Vector2(.25f,.5f), new Vector2(0,58), new Vector2(115,66)); Hold(up,Vector2.up);
@@ -47,7 +50,8 @@ namespace PickDoll
             Hold(Button("TURN L",panel,new Vector2(.75f,.5f),new Vector2(-76,-13),new Vector2(138,66)),Vector2.zero,-1);
             Hold(Button("TURN R",panel,new Vector2(.75f,.5f),new Vector2(76,-13),new Vector2(138,66)),Vector2.zero,1);
             Button("RESET",panel,new Vector2(.75f,.5f),new Vector2(0,-84),new Vector2(290,66),()=>machine.ResetPosition());
-            Label("MOVEMENT PROTOTYPE  /  PICKUP COMES IN WEEK 02",panel,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,25),new Vector2(790,30),16);
+            if (pickup) grab = Button("GRAB",panel,new Vector2(.5f,0),new Vector2(0,55),new Vector2(760,56),()=>pickup.Press()).GetComponent<Button>();
+            Label(pickup ? "GRAB / CARRY / OPEN — PHYSICS PROTOTYPE" : "MOVEMENT PROTOTYPE  /  PICKUP COMES IN WEEK 02",panel,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,pickup ? 12 : 25),new Vector2(790,pickup ? 20 : 30),16);
             ApplySafeArea();
         }
         private void Update()
@@ -56,6 +60,7 @@ namespace PickDoll
             mode.text = machine.Fine ? "PRECISION: ON" : "PRECISION: OFF";
             var aim = machine.Aim;
             position.text = $"MACHINE AXES  /  X {aim.x:+0.000;-0.000;0.000}   Z {aim.y:+0.000;-0.000;0.000}" + (machine.AtLimit ? "  /  LIMIT" : "");
+            if (pickup) { position.text = pickup.Status; grab.interactable = !pickup.Busy; grab.GetComponentInChildren<Text>().text = pickup.Phase == ClawCycle.Stage.Carry ? "OPEN" : pickup.Busy ? "WORKING..." : "GRAB"; }
         }
         private void ApplySafeArea()
         {

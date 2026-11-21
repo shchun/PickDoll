@@ -8,6 +8,7 @@ namespace PickDoll
         public Transform target;
         public float yaw = 12;
         public float elevation = 15;
+        public float controlsHeight = 350;
         private float distance = 3.9f;
         private int preset;
         public void Drag(Vector2 delta)
@@ -27,7 +28,7 @@ namespace PickDoll
             var camera = GetComponent<Camera>();
             float scale = Mathf.Sqrt((Screen.width / 900f) * (Screen.height / 1600f));
             var safe = Screen.safeArea;
-            float bottom = safe.yMin + 350 * scale;
+            float bottom = safe.yMin + controlsHeight * scale;
             float top = safe.yMax - 205 * scale;
             if (top > bottom + 100) camera.rect = new Rect(safe.xMin / Screen.width, bottom / Screen.height, safe.width / Screen.width, (top - bottom) / Screen.height);
             // Fit cabinet plus breathing room; keep phone and unfolded Fold usable.
@@ -49,6 +50,8 @@ namespace PickDoll
         public void OnPointerDown(PointerEventData data) { if (!pointer.HasValue) pointer = data.pointerId; }
         public void OnDrag(PointerEventData data) { if (pointer == data.pointerId) orbit.Drag(data.delta); }
         public void OnPointerUp(PointerEventData data) { if (pointer == data.pointerId) pointer = null; }
+        private void OnApplicationPause(bool paused) { if (paused) pointer = null; }
+        private void OnApplicationFocus(bool focused) { if (!focused) pointer = null; }
         private void OnDisable() { pointer = null; }
     }
 }

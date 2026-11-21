@@ -73,4 +73,4 @@ Windows에서는 실행할 때 약 34초 길이의 오리지널 벨 멜로디가
 
 Unity 6.5 기반 모바일 버전의 1주차 작업. 기계·이동·회전·미세 조작·드래그 시점을 구현했다. 실제 집기 물리는 2주차에 진행한다.
 
-[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Unity 실행 안내](Unity/README.md)
+[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Android 2주차 결과 보고서](android-week-2-results.html) · [Unity 실행 안내](Unity/README.md)
