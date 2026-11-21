@@ -13,6 +13,9 @@ namespace PickDoll
         public float speed = 0.24f;
         public float fineSpeed = 0.035f;
         public float travelLimit = 0.31f;
+        public float carrySpeed;
+        public float acceleration;
+        private Vector2 velocity;
         public bool Fine { get; private set; }
         public Vector2 Aim => new Vector2(carriage.localPosition.x, carriage.localPosition.z);
         public bool AtLimit { get; private set; }
@@ -25,7 +28,7 @@ namespace PickDoll
         public void Hold(HoldControl source, Vector2 direction, bool pressed) { if (pressed) held[source] = direction; else held.Remove(source); }
         public void Rotate(HoldControl source, float direction, bool pressed) { if (GetComponent<ClawCycle>()?.PassiveSuspension == true) return; if (pressed) turns[source] = direction; else turns.Remove(source); }
         public void ToggleFine() { Fine = !Fine; }
-        public void ReleaseControls() { held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; }
+        public void ReleaseControls() { held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; }
         public void ResetPosition()
         {
             ReleaseControls(); pendingDirection = Vector2.zero; yaw = 0;
@@ -36,12 +39,20 @@ namespace PickDoll
         }
         public void Move(Vector2 direction, float seconds, bool fine)
         {
-            var cycle = GetComponent<ClawCycle>(); if (cycle && !cycle.CanMove) { AtLimit = false; return; }
+            var cycle = GetComponent<ClawCycle>(); if (cycle && !cycle.CanMove) { velocity = Vector2.zero; AtLimit = false; return; }
             var position = carriage.localPosition;
-            var requested = position + new Vector3(direction.x, 0, direction.y) * ((fine ? fineSpeed : speed) * seconds);
+            direction = Vector2.ClampMagnitude(direction, 1);
+            float selectedSpeed = fine ? fineSpeed : cycle && cycle.Phase == ClawCycle.Stage.Carry && carrySpeed > 0 ? carrySpeed : speed;
+            var desired = direction * selectedSpeed;
+            // Precision and input release stop immediately; only normal starts/reversals ramp.
+            velocity = acceleration > 0 && !fine && direction.sqrMagnitude > 0
+                ? Vector2.MoveTowards(velocity, desired, acceleration * seconds) : desired;
+            var requested = position + new Vector3(velocity.x, 0, velocity.y) * seconds;
             position.x = Mathf.Clamp(requested.x, -travelLimit, travelLimit);
             position.z = Mathf.Clamp(requested.z, -travelLimit, travelLimit);
             AtLimit = position.x != requested.x || position.z != requested.z;
+            if (position.x != requested.x) velocity.x = 0;
+            if (position.z != requested.z) velocity.y = 0;
             carriage.localPosition = position;
             UpdateMarker();
         }
