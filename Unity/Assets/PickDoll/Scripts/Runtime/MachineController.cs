@@ -10,12 +10,14 @@ namespace PickDoll
         public Transform carriage;
         public Transform claw;
         public Transform aimMarker;
+        public float markerHeight=1.116f;
         public float speed = 0.24f;
         public float fineSpeed = 0.035f;
         public float travelLimit = 0.31f;
         public float carrySpeed;
         public float acceleration;
         private Vector2 velocity;
+        private Vector2 autoVelocity;
         public bool Fine { get; private set; }
         public Vector2 Aim => new Vector2(carriage.localPosition.x, carriage.localPosition.z);
         public bool AtLimit { get; private set; }
@@ -28,7 +30,7 @@ namespace PickDoll
         public void Hold(HoldControl source, Vector2 direction, bool pressed) { if (pressed) held[source] = direction; else held.Remove(source); }
         public void Rotate(HoldControl source, float direction, bool pressed) { if (GetComponent<ClawCycle>()?.PassiveSuspension == true) return; if (pressed) turns[source] = direction; else turns.Remove(source); }
         public void ToggleFine() { Fine = !Fine; }
-        public void ReleaseControls() { held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; }
+        public void ReleaseControls() { held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; autoVelocity = Vector2.zero; }
         public void ResetPosition()
         {
             ReleaseControls(); pendingDirection = Vector2.zero; yaw = 0;
@@ -56,9 +58,20 @@ namespace PickDoll
             carriage.localPosition = position;
             UpdateMarker();
         }
+        internal bool TravelTo(Vector2 target,float maxSpeed,float dt)
+        {
+            var delta=target-Aim;float distance=delta.magnitude;float accel=Mathf.Max(.1f,acceleration);
+            float desiredSpeed=Mathf.Min(maxSpeed,Mathf.Sqrt(2*accel*distance));
+            autoVelocity=Vector2.MoveTowards(autoVelocity,delta.normalized*desiredSpeed,accel*dt);
+            var next=Aim+autoVelocity*dt;
+            bool arrived=distance<=Mathf.Max(.001f,autoVelocity.magnitude*dt);
+            if(arrived){next=target;autoVelocity=Vector2.zero;}
+            carriage.localPosition=new Vector3(Mathf.Clamp(next.x,-travelLimit,travelLimit),carriage.localPosition.y,Mathf.Clamp(next.y,-travelLimit,travelLimit));
+            UpdateMarker();return arrived;
+        }
         private void UpdateMarker()
         {
-            if (aimMarker) aimMarker.position = new Vector3(carriage.position.x, 1.116f, carriage.position.z);
+            if (aimMarker) aimMarker.position = new Vector3(carriage.position.x, markerHeight, carriage.position.z);
         }
         private void Update()
         {

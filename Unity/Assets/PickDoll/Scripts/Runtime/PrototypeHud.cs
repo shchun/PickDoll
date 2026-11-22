@@ -15,6 +15,8 @@ namespace PickDoll
         private Font font;
         private ClawCycle pickup;
         private Button grab;
+        private Text collected;
+        private int displayedCount = -1;
         private Rect lastSafe;
         private int width, height;
         private readonly Color ink = new Color(0.98f, 0.93f, 0.97f);
@@ -36,7 +38,15 @@ namespace PickDoll
             drag.gameObject.AddComponent<Image>().color = Color.clear;
             drag.gameObject.AddComponent<OrbitDragArea>().orbit = orbit;
             Label("PICKDOLL", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-85), new Vector2(520,78), 48, TextAnchor.MiddleLeft);
-            Label(pickup && pickup.smoothMotion ? "ANDROID / WEEK 04" : pickup && pickup.PassiveSuspension ? "ANDROID / WEEK 03" : pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
+            Label(pickup && pickup.automaticDelivery ? "ANDROID / WEEK 05" : pickup && pickup.smoothMotion ? "ANDROID / WEEK 04" : pickup && pickup.PassiveSuspension ? "ANDROID / WEEK 03" : pickup ? "ANDROID / WEEK 02" : "ANDROID / WEEK 01", safe, new Vector2(0,1), new Vector2(0,1), new Vector2(300,-133), new Vector2(520,44), 20, TextAnchor.MiddleLeft);
+            if(pickup && pickup.receiver) {
+                var score = Rect("Collection counter",safe,new Vector2(1,1),new Vector2(1,1),Vector2.zero,Vector2.zero);
+                score.sizeDelta=new Vector2(230,106);score.anchoredPosition=new Vector2(-155,-172);
+                score.gameObject.AddComponent<Image>().color=new Color(.09f,.055f,.11f,.97f);
+                Label("COLLECTED",score,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(0,-21),new Vector2(210,30),22);
+                collected=Label("0",score,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(0,-12),new Vector2(210,66),56);
+                collected.fontStyle=FontStyle.Bold;collected.color=Color.white;
+            }
             Button("VIEW", safe, new Vector2(1,1), new Vector2(-115,-85), new Vector2(150,68), () => orbit.NextPreset());
             Label("DRAG TO LOOK AROUND", safe, new Vector2(.5f,1), new Vector2(.5f,1), new Vector2(0,-190), new Vector2(650,40), 20);
             var panel = Rect("Controls", safe, Vector2.zero, new Vector2(1,0), new Vector2(20,20), new Vector2(-20,pickup ? 450 : 330));
@@ -51,18 +61,21 @@ namespace PickDoll
             Hold(Button("TURN L",panel,new Vector2(.75f,.5f),new Vector2(-76,-13),new Vector2(138,66)),Vector2.zero,-1);
             Hold(Button("TURN R",panel,new Vector2(.75f,.5f),new Vector2(76,-13),new Vector2(138,66)),Vector2.zero,1);
             } else Label("PASSIVE SWING",panel,new Vector2(.75f,.5f),new Vector2(.75f,.5f),new Vector2(0,-13),new Vector2(290,50),20);
-            Button("RESET",panel,new Vector2(.75f,.5f),new Vector2(0,-84),new Vector2(290,66),()=>machine.ResetPosition());
+            Button(pickup && pickup.automaticDelivery ? "NEW ROUND" : "RESET",panel,new Vector2(.75f,.5f),new Vector2(0,-84),new Vector2(290,66),()=>machine.ResetPosition());
             if (pickup) grab = Button("GRAB",panel,new Vector2(.5f,0),new Vector2(0,55),new Vector2(760,56),()=>pickup.Press()).GetComponent<Button>();
-            Label(pickup ? "GRAB / CARRY / OPEN — PHYSICS PROTOTYPE" : "MOVEMENT PROTOTYPE  /  PICKUP COMES IN WEEK 02",panel,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,pickup ? 12 : 25),new Vector2(790,pickup ? 20 : 30),16);
+            Label(pickup && pickup.automaticDelivery ? "AUTO RETURN / LOWER EXIT / SESSION COUNT" : pickup ? "GRAB / CARRY / OPEN — PHYSICS PROTOTYPE" : "MOVEMENT PROTOTYPE  /  PICKUP COMES IN WEEK 02",panel,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,pickup ? 12 : 25),new Vector2(790,pickup ? 20 : 30),16);
             ApplySafeArea();
         }
         private void Update()
         {
             if (lastSafe != Screen.safeArea || width != Screen.width || height != Screen.height) { machine.ReleaseControls(); ApplySafeArea(); }
             mode.text = machine.Fine ? "PRECISION: ON" : "PRECISION: OFF";
+            if(collected && displayedCount!=pickup.receiver.Count) {
+                displayedCount=pickup.receiver.Count;collected.text=displayedCount.ToString();
+            }
             var aim = machine.Aim;
             position.text = $"MACHINE AXES  /  X {aim.x:+0.000;-0.000;0.000}   Z {aim.y:+0.000;-0.000;0.000}" + (machine.AtLimit ? "  /  LIMIT" : "");
-            if (pickup) { position.text = pickup.Status; grab.interactable = !pickup.Busy; grab.GetComponentInChildren<Text>().text = pickup.Phase == ClawCycle.Stage.Carry ? "OPEN" : pickup.Busy ? "WORKING..." : "GRAB"; }
+            if (pickup) { position.text = pickup.Status; grab.interactable = pickup.CanPress; grab.GetComponentInChildren<Text>().text = pickup.Phase == ClawCycle.Stage.Carry ? "OPEN" : pickup.Busy ? "WORKING..." : pickup.CanPress ? "GRAB" : "MOVE OUT OF CHUTE"; }
         }
         private void ApplySafeArea()
         {
