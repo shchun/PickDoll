@@ -4,7 +4,7 @@ namespace PickDoll
 {
     public sealed class ClawCycle : MonoBehaviour
     {
-        public enum Stage { Ready, Lowering, Closing, Raising, Carry, Opening }
+        public enum Stage { Ready, Lowering, Closing, Raising, Carry, Opening, Returning, Settling, Repositioning, Preparing }
         public MachineController machine;
         public Rigidbody hub;
         public HingeJoint[] fingers;
@@ -13,13 +13,29 @@ namespace PickDoll
         public Rigidbody suspensionAnchor;
         public float suspensionLength = .14f;
         public bool PassiveSuspension => suspensionAnchor != null;
-        public bool CanMove => !Busy || (PassiveSuspension && Phase == Stage.Lowering);
+        public bool CanMove => !Busy || (PassiveSuspension && (Phase == Stage.Lowering || Phase == Stage.Preparing));
         public float topHeight = 1.83f;
         public float bottomHeight = 1.42f;
         public float gripStiffness = 1.5f;
         public float gripDamping = .06f;
         public float closeAngle = -37;
         public float releaseAngle;
+        public PrizeReceiver receiver;
+        public bool automaticDelivery;
+        public float returnSpeed=.48f;
+
+        private float settledTime;
+        private bool needsOpenSpace;
+        public int OpenFingerCount { get {
+            if(!initialized)return 0;int count=0;
+            for(int i=0;i<fingers.Length;i++) {
+                var open=fingerRotations[i];var local=Quaternion.Inverse(hub.rotation)*fingers[i].transform.rotation;
+                float angle=Vector3.SignedAngle(open*Vector3.down,local*Vector3.down,open*Vector3.forward);
+                if(angle>=-6)count++;
+            }
+            return count;
+        } }
+        public bool CanPress => !Busy && (!automaticDelivery || Phase!=Stage.Ready || !receiver.OverHole(machine.Aim));
         public bool smoothMotion;
         public float loweringSpeed = .28f;
         public float raisingSpeed = .24f;
@@ -38,7 +54,9 @@ namespace PickDoll
         public string Status => Phase switch {
             Stage.Lowering => PassiveSuspension ? "LOWERING / MOVE TO ADJUST" : "LOWERING", Stage.Closing => "CLOSING",
             Stage.Raising => "RAISING", Stage.Carry => "MOVE TO CARRY / OPEN TO RELEASE",
-            Stage.Opening => "OPENING", _ => "AIM, THEN GRAB"
+            Stage.Preparing => "OPENING BEFORE LOWERING", Stage.Returning => "RETURNING TO CHUTE",
+            Stage.Settling => "SETTLING BEFORE RELEASE", Stage.Repositioning => "RETURNING TO PLAY",
+            Stage.Opening => automaticDelivery ? "RELEASING" : "OPENING", _ => needsOpenSpace ? "MOVE TO GIVE CLAW SPACE" : CanPress ? "AIM, THEN GRAB" : "MOVE OUT OF CHUTE AREA"
         };
         private Vector3[] prizePositions;
         private Quaternion[] prizeRotations, fingerRotations;
@@ -55,6 +73,7 @@ namespace PickDoll
             for (int i = 0; i < fingers.Length; i++) fingerRotations[i] = Quaternion.Inverse(hub.rotation) * fingers[i].transform.rotation;
             for (int a = 0; a < fingers.Length; a++) for (int b = a + 1; b < fingers.Length; b++)
                 foreach (var x in fingers[a].GetComponentsInChildren<Collider>()) foreach (var y in fingers[b].GetComponentsInChildren<Collider>()) Physics.IgnoreCollision(x, y);
+            if(receiver)receiver.Initialize();
             height = topHeight; Phase = Stage.Ready;
             SetSpring(0);
         }
@@ -62,16 +81,16 @@ namespace PickDoll
         public void Press()
         {
             Initialize();
-            if (Phase == Stage.Ready) {
+            if (Phase == Stage.Ready && CanPress) {
                 float category = gripVariationEnabled ? Random.value : 1;
                 CurrentWeakGrip = gripVariationEnabled && (weakGripChance >= 1 || category < weakGripChance);
                 CurrentGripScale = EvaluateGrip(category, gripVariationEnabled ? Random.value : .5f);
-                elapsed = 0; verticalVelocity = 0; SetSpring(0); Phase = Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
+                elapsed = 0; verticalVelocity = 0; SetSpring(0); needsOpenSpace=false; Phase = automaticDelivery ? Stage.Preparing : Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
             else if (Phase == Stage.Carry) { elapsed = 0; Phase = Stage.Opening; }
         }
         public void ResetCycle()
         {
-            Initialize(); height = topHeight; verticalVelocity = 0; elapsed = 0; CurrentGripScale = 1; CurrentWeakGrip = false; Phase = Stage.Ready; SetSpring(0);
+            Initialize(); if(receiver)receiver.BeginNewRound(); settledTime=0; needsOpenSpace=false; height = topHeight; verticalVelocity = 0; elapsed = 0; CurrentGripScale = 1; CurrentWeakGrip = false; Phase = Stage.Ready; SetSpring(0);
             var target = new Vector3(machine.carriage.position.x, height, machine.carriage.position.z);
             hub.position = target; hub.rotation = machine.claw.rotation;
             if (PassiveSuspension) {
@@ -96,7 +115,7 @@ namespace PickDoll
         {
             foreach (var finger in fingers)
             {
-                float forceScale = Phase == Stage.Closing || Phase == Stage.Raising || Phase == Stage.Carry ? CurrentGripScale : 1;
+                float forceScale = Phase == Stage.Closing || Phase == Stage.Raising || Phase == Stage.Carry || Phase == Stage.Returning || Phase == Stage.Settling ? CurrentGripScale : 1;
                 var spring = finger.spring; spring.spring = gripStiffness * forceScale; spring.damper = gripDamping * Mathf.Sqrt(forceScale);
                 spring.targetPosition = target; finger.spring = spring; finger.useSpring = true;
             }
@@ -119,9 +138,16 @@ namespace PickDoll
         public void Step(float dt)
         {
             Initialize(); elapsed += dt;
+            if(needsOpenSpace&&OpenFingerCount>=2)needsOpenSpace=false;
             switch (Phase)
             {
+                case Stage.Preparing:
+                    SetSpring(0);
+                    if(elapsed>=.55f&&OpenFingerCount>=2){Phase=Stage.Lowering;elapsed=0;}
+                    else if(elapsed>=1.8f){needsOpenSpace=true;Phase=Stage.Ready;elapsed=0;machine.ReleaseControls();}
+                    break;
                 case Stage.Lowering:
+                    if(automaticDelivery)SetSpring(0);
                     MoveLift(bottomHeight, loweringSpeed, dt);
                     if (height <= bottomHeight) { Phase = Stage.Closing; elapsed = 0; }
                     break;
@@ -132,11 +158,26 @@ namespace PickDoll
                     break;
                 case Stage.Raising:
                     MoveLift(topHeight, raisingSpeed, dt);
-                    if (height >= topHeight) { Phase = Stage.Carry; elapsed = 0; machine.ReleaseControls(); }
+                    if (height >= topHeight) { Phase = automaticDelivery ? Stage.Returning : Stage.Carry; elapsed = 0; machine.ReleaseControls(); }
+                    break;
+                case Stage.Returning:
+                    if(machine.TravelTo(receiver.holeCenter,returnSpeed,dt)){Phase=Stage.Settling;elapsed=0;settledTime=0;}
+                    break;
+                case Stage.Settling:
+                    var horizontal=new Vector2(hub.position.x,hub.position.z);
+                    var swayVelocity=new Vector2(hub.linearVelocity.x,hub.linearVelocity.z);
+                    bool stable=Vector2.Distance(horizontal,receiver.holeCenter)<.035f && swayVelocity.magnitude<.15f;
+                    settledTime=stable?settledTime+dt:0;
+                    if((elapsed>=.45f&&settledTime>=.15f)||elapsed>=1.8f){Phase=Stage.Opening;elapsed=0;}
+                    break;
+                case Stage.Repositioning:
+                    MoveLift(topHeight,raisingSpeed,dt);
+                    bool home=machine.TravelTo(Vector2.zero,returnSpeed,dt);
+                    if(home&&height>=topHeight){Phase=Stage.Ready;elapsed=0;machine.ReleaseControls();}
                     break;
                 case Stage.Opening:
                     SetSpring(Mathf.Lerp(closeAngle, releaseAngle, Mathf.Clamp01(elapsed / .55f)));
-                    if (elapsed >= (PassiveSuspension ? 1.1f : .7f)) { SetSpring(0); Phase = Stage.Ready; elapsed = 0; }
+                    if (elapsed >= (PassiveSuspension ? 1.1f : .7f)) { SetSpring(0); Phase = automaticDelivery ? Stage.Repositioning : Stage.Ready; elapsed = 0; machine.ReleaseControls(); }
                     break;
             }
             var target = new Vector3(machine.carriage.position.x, height, machine.carriage.position.z);

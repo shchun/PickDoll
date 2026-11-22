@@ -9,6 +9,9 @@ namespace PickDoll
         public float yaw = 12;
         public float elevation = 15;
         public float controlsHeight = 350;
+        public float minimumDistance=3.5f;
+        public float framingHeight = 2.65f;
+        public float framingWidth = 1.75f;
         private float distance = 3.9f;
         private int preset;
         public void Drag(Vector2 delta)
@@ -33,9 +36,9 @@ namespace PickDoll
             if (top > bottom + 100) camera.rect = new Rect(safe.xMin / Screen.width, bottom / Screen.height, safe.width / Screen.width, (top - bottom) / Screen.height);
             // Fit cabinet plus breathing room; keep phone and unfolded Fold usable.
             float vertical = camera.fieldOfView * Mathf.Deg2Rad;
-            float fitHeight = 2.65f / (2 * Mathf.Tan(vertical / 2));
-            float fitWidth = 1.75f / (2 * Mathf.Tan(vertical / 2) * camera.aspect);
-            distance = Mathf.Max(3.5f, fitHeight, fitWidth);
+            float fitHeight = framingHeight / (2 * Mathf.Tan(vertical / 2));
+            float fitWidth = framingWidth / (2 * Mathf.Tan(vertical / 2) * camera.aspect);
+            distance = Mathf.Max(minimumDistance, fitHeight, fitWidth);
             var rotation = Quaternion.Euler(elevation, yaw, 0);
             transform.position = target.position + rotation * new Vector3(0, 0, -distance);
             transform.LookAt(target);
