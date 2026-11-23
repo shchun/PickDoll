@@ -1,23 +1,24 @@
 # PickDoll Android — Unity
 
-현재 실행 씬은 `Assets/PickDoll/Scenes/Week06.unity`다. 67% 길이의 넓게 열리는 집게, 감쇠 강화, 아날로그 터치 조이스틱·큰 GRAB, 투명 상단과 1–2배 줌을 적용했다. CLI 빌드는 `-Week 6` 옵션을 사용한다. S26 실제 획득과 태블릿 설치를 확인한 상태로 6주차 산출물을 마감했다.
+현재 실행 씬은 `Assets/PickDoll/Scenes/Week07.unity`다. 배출구 위 최초 대기, 작고 투명한 상단 HUD, 곰·토끼·펭귄 7개 랜덤 배치와 로컬 누적 저장을 추가했다. CLI 빌드는 `-Week 7` 옵션을 사용한다. 검증 상태는 [7주차 보고서](../android-week-7-results.html)에 기록한다.
 
 Unity 6.5 (`6000.5.5f1`) / URP 17.5.0 / Input System 1.19.0 / uGUI 2.5.0.
 
 다음 1주차 설명은 초기 구현 기록이다. 1주차는 **기계와 이동 조작을 검증하는 프로토타입**이다. 인형 집기, 획득, 도감, 저장, Google Play Games는 아직 구현하지 않는다. 화면의 곰 3개는 물리 검증 전 임시 모델이며 최종 인형이 아니다. UI는 시스템 글꼴의 재배포를 피하기 위해 Unity 기본 글꼴과 영문을 임시 사용한다.
 
-## 현재 6주차 실행
+## 현재 7주차 실행
 
-Unity Hub에서 이 프로젝트를 열고 `Assets/PickDoll/Scenes/Week06.unity`를 실행한다. `tools/Run-Unity.ps1 -Week 6 -Task Generate|Validate|Windows|Android`를 지원한다.
+Unity Hub에서 `Assets/PickDoll/Scenes/Week07.unity`를 실행한다. `tools/Run-Unity.ps1 -Week 7 -Task Generate|Validate|Windows|Android`를 지원한다.
 
-- 조이스틱: 드래그량에 따른 이동, 작은 드래그로 미세 조정. 방향·PRECISION 버튼 제거
-- GRAB: 자동 집기·복귀·배출 / NEW ROUND: 재고 초기화, 세션 누적 유지
-- 게임 화면 한 손가락: 시점 회전 / 두 손가락: 1–2배 핀치 줌 / VIEW: 시점 전환·줌 초기화
+- 조이스틱: 드래그량에 따른 이동과 미세 조정. 시작 시 배출구 위이므로 이동한 뒤 GRAB
+- GRAB: 자동 집기·복귀·배출 / NEW ROUND: 7개 재배치, 누적 기록 유지
+- 한 손가락: 시점 / 두 손가락: 1–2배 줌 / VIEW: 시점 전환·줌 초기화
 - Windows: 방향키·Shift·Enter/Space·R·마우스 드래그·휠 줌
-- Windows 검사: `--pickdoll-week06-test`, 실행 폴더 `Checks/delivery-runtime.txt`
-- 조정값: `WeekSixBuilder` 상단. 물리 검사에서 기본 3곳·실제 이동 접근 구석 3곳과 배출·적재, 감쇠 비교 통과
-
-[6주차 보고서](../android-week-6-results.html)에 실행·실기기 검증 범위를 기록한다.
+- 검사: `tools/Test-Week07.ps1`, UI 비율 검사 `-UiOnly -Width 906 -Height 1088`
+- 실행 검사 파일: `Builds/Week07/Windows/Checks/`; 저장 검사는 별도 임시 폴더로 격리해 실제 수집 기록을 건드리지 않음
+- 로컬 저장: `Application.persistentDataPath/collection-v1.json`, 이전 유효 파일 `.bak`. 총수와 종류별 수는 영수증에서 계산
+- 앱 데이터 삭제·재설치·다른 기기 복원은 아직 지원하지 않음. 일반 덮어쓰기 설치와 프로세스 재실행에서는 유지
+- 인형 데이터: `Assets/PickDoll/Prizes/`, 씬 생성과 임시 모델: `WeekSevenBuilder`
 
 ## 1주차 기록: 열기
 

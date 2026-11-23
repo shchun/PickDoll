@@ -5,6 +5,8 @@ namespace PickDoll
     public sealed class PrizeIdentity : MonoBehaviour
     {
         public string displayName = "Bear";
+        public PrizeDefinition definition;
+        public string SpeciesId => definition ? definition.speciesId : "bear";
         public string Ticket { get; private set; }
         public bool EnteredChute { get; internal set; }
         public bool Delivered { get; internal set; }

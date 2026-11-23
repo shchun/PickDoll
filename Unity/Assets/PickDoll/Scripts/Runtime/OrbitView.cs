@@ -9,6 +9,7 @@ namespace PickDoll
         public float yaw = 12;
         public float elevation = 15;
         public float controlsHeight = 350;
+        public float headerHeight = 205;
         public float minimumDistance=3.5f;
         public float framingHeight = 2.65f;
         public float framingWidth = 1.75f;
@@ -38,7 +39,7 @@ namespace PickDoll
             float scale = Mathf.Sqrt((Screen.width / 900f) * (Screen.height / 1600f));
             var safe = Screen.safeArea;
             float bottom = safe.yMin + controlsHeight * scale;
-            float top = safe.yMax - 205 * scale;
+            float top = safe.yMax - headerHeight * scale;
             if (top > bottom + 100) camera.rect = new Rect(safe.xMin / Screen.width, bottom / Screen.height, safe.width / Screen.width, (top - bottom) / Screen.height);
             // Fit cabinet plus breathing room; keep phone and unfolded Fold usable.
             if(baseFieldOfView<=0)baseFieldOfView=camera.fieldOfView;
