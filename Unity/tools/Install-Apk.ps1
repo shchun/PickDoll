@@ -1,10 +1,11 @@
-param([Parameter(Mandatory=$true)][string]$Serial, [ValidateSet(1,2,3,4,5)][int]$Week=1)
+param([Parameter(Mandatory=$true)][string]$Serial, [ValidateSet(1,2,3,4,5,6)][int]$Week=1)
 $ErrorActionPreference = 'Stop'
 $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Android\PickDoll-week01.apk'))
 if ($Week -eq 2) { $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Week02\Android\PickDoll-week02.apk')) }
 if ($Week -eq 3) { $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Week03\Android\PickDoll-week03.apk')) }
 if ($Week -eq 4) { $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Week04\Android\PickDoll-week04.apk')) }
 if ($Week -eq 5) { $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Week05\Android\PickDoll-week05.apk')) }
+if ($Week -eq 6) { $apkPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Builds\Week06\Android\PickDoll-week06.apk')) }
 if (-not (Test-Path -LiteralPath $apkPath)) { throw 'Build the Android APK first.' }
 $adbCommand = Get-Command adb -ErrorAction Stop
 $deviceState = & $adbCommand.Source -s $Serial get-state 2>&1

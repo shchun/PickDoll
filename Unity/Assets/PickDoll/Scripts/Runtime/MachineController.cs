@@ -17,6 +17,9 @@ namespace PickDoll
         public float carrySpeed;
         public float acceleration;
         private Vector2 velocity;
+        private Vector2 analog;
+        public Vector2 Analog => analog;
+        public void SetAnalog(Vector2 value) { analog=Vector2.ClampMagnitude(value,1); }
         private Vector2 autoVelocity;
         public bool Fine { get; private set; }
         public Vector2 Aim => new Vector2(carriage.localPosition.x, carriage.localPosition.z);
@@ -30,7 +33,7 @@ namespace PickDoll
         public void Hold(HoldControl source, Vector2 direction, bool pressed) { if (pressed) held[source] = direction; else held.Remove(source); }
         public void Rotate(HoldControl source, float direction, bool pressed) { if (GetComponent<ClawCycle>()?.PassiveSuspension == true) return; if (pressed) turns[source] = direction; else turns.Remove(source); }
         public void ToggleFine() { Fine = !Fine; }
-        public void ReleaseControls() { held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; autoVelocity = Vector2.zero; }
+        public void ReleaseControls() { analog=Vector2.zero; held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; autoVelocity = Vector2.zero; }
         public void ResetPosition()
         {
             ReleaseControls(); pendingDirection = Vector2.zero; yaw = 0;
@@ -75,7 +78,7 @@ namespace PickDoll
         }
         private void Update()
         {
-            var direction = Vector2.zero;
+            var direction = analog;
             foreach (var value in held.Values) direction += value;
             var turn = 0f;
             foreach (var value in turns.Values) turn += value;
