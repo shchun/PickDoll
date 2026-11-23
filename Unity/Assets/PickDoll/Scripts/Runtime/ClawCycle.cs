@@ -24,6 +24,7 @@ namespace PickDoll
         public bool automaticDelivery;
         public float returnSpeed=.48f;
 
+        public float openingTolerance=6;
         private float settledTime;
         private bool needsOpenSpace;
         public int OpenFingerCount { get {
@@ -31,7 +32,7 @@ namespace PickDoll
             for(int i=0;i<fingers.Length;i++) {
                 var open=fingerRotations[i];var local=Quaternion.Inverse(hub.rotation)*fingers[i].transform.rotation;
                 float angle=Vector3.SignedAngle(open*Vector3.down,local*Vector3.down,open*Vector3.forward);
-                if(angle>=-6)count++;
+                if(angle>=-openingTolerance)count++;
             }
             return count;
         } }
