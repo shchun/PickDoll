@@ -12,9 +12,11 @@ namespace PickDoll
         public float outsideFaceZ = -.50f;
         private readonly HashSet<string> receipts = new HashSet<string>();
         private bool initialized;
-        public int Count => receipts.Count;
+        public bool persistentProgress;
+        public CollectionStore Store {get;private set;}
+        public int Count => Store!=null?Store.Total:receipts.Count;
         public event Action<PrizeIdentity> Acquired;
-        public void Initialize(){if(initialized)return;initialized=true;foreach(var body in prizes)body.GetComponent<PrizeIdentity>().EnsureTicket();}
+        public void Initialize(){if(initialized)return;initialized=true;if(persistentProgress)Store=new CollectionStore(CollectionStore.DefaultPath);foreach(var body in prizes)body.GetComponent<PrizeIdentity>().EnsureTicket();}
         private void Awake()=>Initialize();
         public void BeginNewRound(){Initialize();foreach(var body in prizes)body.GetComponent<PrizeIdentity>().Rearm();}
         public bool OverHole(Vector2 aim,float margin=.025f)=>Mathf.Abs(aim.x-holeCenter.x)<holeSize.x*.5f+margin&&Mathf.Abs(aim.y-holeCenter.y)<holeSize.y*.5f+margin;
@@ -36,8 +38,11 @@ namespace PickDoll
                 if(!prize.EnteredChute||!exitZone.bounds.Intersects(bounds))continue;
                 // The whole prize must clear the front face, not just touch a trigger with one foot.
                 if(first||bounds.max.z>=outsideFaceZ)continue;
+                bool added;
+                if(Store!=null){if(!Store.Commit(prize.Ticket,prize.SpeciesId,out added))continue;}
+                else added=receipts.Add(prize.Ticket);
                 prize.Delivered=true;
-                if(receipts.Add(prize.Ticket)) {
+                if(added) {
                     if(Debug.isDebugBuild)Debug.Log($"PICKDOLL_ACQUIRED count={Count} prize={prize.displayName} at={body.position}");
                     Acquired?.Invoke(prize);
                 }

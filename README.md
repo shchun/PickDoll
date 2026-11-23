@@ -73,4 +73,4 @@ Windows에서는 실행할 때 약 34초 길이의 오리지널 벨 멜로디가
 
 Unity 6.5 기반 Android 인형뽑기 프로토타입. 접촉 물리 집기·운반·놓기, 하강 중 미세 조정과 관성 회전을 구현했다. 4주차에는 구석 집기 형상·속도·감쇠와 그립 변동을 안정화했다. 5주차에는 하강 전 열림 확인, 자동 복귀·하부 배출·중복 없는 세션 획득을 구현했다. 6주차에는 짧고 넓게 열리는 집게와 감쇠 강화, 터치 조이스틱·큰 GRAB, 투명 상단·핀치 줌을 적용했다. PC 검증과 S26 실제 획득·갤럭시 탭 설치를 확인했다.
 
-[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Android 2주차 결과 보고서](android-week-2-results.html) · [Android 3주차 작업 결과](android-week-3-results.html) · [Android 4주차 안정화 결과](android-week-4-results.html) · [Android 5주차 자동 배출 결과](android-week-5-results.html) · [Android 6주차 집게·터치 조작 결과](android-week-6-results.html) · [Unity 실행 안내](Unity/README.md)
+[Android 계획서](android-project-plan.html) · [Android 1주차 완료 보고서](android-week-1-results.html) · [Android 2주차 결과 보고서](android-week-2-results.html) · [Android 3주차 작업 결과](android-week-3-results.html) · [Android 4주차 안정화 결과](android-week-4-results.html) · [Android 5주차 자동 배출 결과](android-week-5-results.html) · [Android 6주차 집게·터치 조작 결과](android-week-6-results.html) · [Android 7주차 저장·인형 확장 결과](android-week-7-results.html) · [Unity 실행 안내](Unity/README.md)

@@ -9,6 +9,7 @@ namespace PickDoll
         public Rigidbody hub;
         public HingeJoint[] fingers;
         public Rigidbody[] prizes;
+        public PrizeStock stock;
         public Transform cable;
         public Rigidbody suspensionAnchor;
         public float suspensionLength = .14f;
@@ -77,6 +78,7 @@ namespace PickDoll
             if(receiver)receiver.Initialize();
             height = topHeight; Phase = Stage.Ready;
             SetSpring(0);
+            if(stock)stock.Restock();
         }
         private void Awake() { if (PassiveSuspension) Time.fixedDeltaTime = .01f; Initialize(); }
         public void Press()
@@ -110,6 +112,7 @@ namespace PickDoll
                 prizes[i].position = prizePositions[i]; prizes[i].rotation = prizeRotations[i];
                 if (!prizes[i].isKinematic) { prizes[i].linearVelocity = Vector3.zero; prizes[i].angularVelocity = Vector3.zero; prizes[i].WakeUp(); }
             }
+            if(stock)stock.Restock();
             Physics.SyncTransforms();
         }
         private void SetSpring(float target)

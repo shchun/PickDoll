@@ -8,6 +8,7 @@ namespace PickDoll
     {
         public MachineController machine;
         public OrbitView orbit;
+        public bool compactHeader;
         private ClawCycle cycle;
         private Font font;
         private RectTransform safe;
@@ -27,11 +28,20 @@ namespace PickDoll
             safe=Rect("Safe Area",canvas.transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             // The 3D camera only clears its viewport. Opaque UI backdrops clear changing
             // text outside that viewport instead of retaining pixels from earlier frames.
-            var header=Rect("Header backdrop",safe,new Vector2(0,1),Vector2.one,new Vector2(0,-205),Vector2.zero);
             var footer=Rect("Controls backdrop",safe,Vector2.zero,new Vector2(1,0),Vector2.zero,new Vector2(0,440));
-            foreach(var backdrop in new[]{header,footer}){var image=backdrop.gameObject.AddComponent<Image>();image.color=new Color(.08f,.055f,.105f);image.raycastTarget=false;}
-            var cameraArea=Rect("Camera gestures",safe,Vector2.zero,Vector2.one,new Vector2(0,430),new Vector2(0,-205));
+            var footerImage=footer.gameObject.AddComponent<Image>();footerImage.color=new Color(.08f,.055f,.105f);footerImage.raycastTarget=false;
+            if(!compactHeader){var header=Rect("Header backdrop",safe,new Vector2(0,1),Vector2.one,new Vector2(0,-205),Vector2.zero);var image=header.gameObject.AddComponent<Image>();image.color=footerImage.color;image.raycastTarget=false;}
+            var cameraArea=Rect("Camera gestures",safe,Vector2.zero,Vector2.one,new Vector2(0,440),new Vector2(0,compactHeader?0:-205));
             cameraArea.gameObject.AddComponent<Image>().color=Color.clear;drag=cameraArea.gameObject.AddComponent<OrbitDragArea>();drag.orbit=orbit;
+            if(compactHeader) {
+                var title=Panel("Compact title",safe,new Vector2(0,1),new Vector2(123,-45),new Vector2(206,66),new Color(.20f,.08f,.18f,.85f),22,false);
+                Label("PickDoll",title,new Vector2(.5f,.5f),Vector2.zero,new Vector2(190,58),32,cream);
+                var score=Panel("Collection counter",safe,new Vector2(1,1),new Vector2(-108,-53),new Vector2(176,82),new Color(.20f,.08f,.18f,.9f),22,false);
+                Label("COLLECTED",score,new Vector2(.5f,.5f),new Vector2(0,23),new Vector2(160,22),15,cream);
+                count=Label("0",score,new Vector2(.5f,.5f),new Vector2(0,-13),new Vector2(160,50),38,Color.white);
+                Button("VIEW",safe,new Vector2(.5f,1),new Vector2(0,-40),new Vector2(116,52),()=>orbit.NextPreset(),new Color(.30f,.14f,.26f,.8f),18);
+                zoomText=Label("",safe,new Vector2(.5f,0),new Vector2(0,460),new Vector2(760,30),18,cream);
+            }else {
             Label("PickDoll",safe,new Vector2(0,1),new Vector2(205,-65),new Vector2(330,74),48,cream,TextAnchor.MiddleLeft);
             Label("SWEET LITTLE WINS",safe,new Vector2(0,1),new Vector2(205,-112),new Vector2(330,32),18,new Color(1,.64f,.76f),TextAnchor.MiddleLeft);
             var score=Panel("Collection counter",safe,new Vector2(1,1),new Vector2(-132,-130),new Vector2(190,100),new Color(.23f,.12f,.22f),24);
@@ -39,6 +49,7 @@ namespace PickDoll
             count=Label("0",score,new Vector2(.5f,.5f),new Vector2(0,-13),new Vector2(170,64),56,Color.white);
             Button("VIEW",safe,new Vector2(1,1),new Vector2(-132,-40),new Vector2(190,48),()=>orbit.NextPreset(),new Color(.43f,.23f,.37f),20);
             zoomText=Label("DRAG TO LOOK  /  PINCH TO ZOOM",safe,new Vector2(.5f,1),new Vector2(0,-190),new Vector2(760,30),18,cream);
+            }
             var panel=Rect("Touch controls",safe,Vector2.zero,new Vector2(1,0),new Vector2(20,20),new Vector2(-20,420));
             var surface=panel.gameObject.AddComponent<SoftPanel>();surface.radius=36;surface.color=new Color(.98f,.89f,.88f);
             status=Label("READY FOR A LITTLE WIN?",panel,new Vector2(.5f,1),new Vector2(0,-38),new Vector2(780,34),23,plum);
@@ -61,6 +72,7 @@ namespace PickDoll
             grab.interactable=cycle.CanPress;grabText.text=cycle.Busy?"ON MY WAY...":cycle.CanPress?"GRAB!":"MOVE TO AIM";
             grabText.fontSize=cycle.Busy||!cycle.CanPress?26:38;
             status.text=cycle.Phase==ClawCycle.Stage.Ready?"READY FOR A LITTLE WIN?":cycle.Status;
+            if(cycle.receiver.Store!=null&&cycle.receiver.Store.Error!=null)status.text="SAVE ERROR / KEEP APP DATA";
             zoomText.text=orbit.Zoom>1.01f?$"ZOOM {orbit.Zoom:0.0}x  /  VIEW TO RESET":"DRAG TO LOOK  /  PINCH TO ZOOM";
         }
         private void ApplySafeArea(){previousSafe=Screen.safeArea;previousSize=new Vector2(Screen.width,Screen.height);safe.anchorMin=new Vector2(previousSafe.xMin/Screen.width,previousSafe.yMin/Screen.height);safe.anchorMax=new Vector2(previousSafe.xMax/Screen.width,previousSafe.yMax/Screen.height);}
