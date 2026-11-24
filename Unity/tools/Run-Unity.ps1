@@ -1,6 +1,6 @@
 param(
     [ValidateSet('Generate','Validate','Windows','Android')][string]$Task = 'Generate',
-    [ValidateSet(1,2,3,4,5,6,7)][int]$Week = 1,
+    [ValidateSet(1,2,3,4,5,6,7,8)][int]$Week = 1,
     [string]$Editor = 'C:\Program Files\Unity\Hub\Editor\6000.5.5f1\Editor\Unity.exe'
 )
 $ErrorActionPreference = 'Stop'
@@ -14,6 +14,7 @@ if ($Week -eq 4) { $methods = @{ Generate='PickDoll.Editor.WeekFourBuilder.Gener
 if ($Week -eq 5) { $methods = @{ Generate='PickDoll.Editor.WeekFiveBuilder.Generate'; Validate='PickDoll.Editor.WeekFiveBuilder.Check'; Windows='PickDoll.Editor.WeekFiveBuilder.BuildWindows'; Android='PickDoll.Editor.WeekFiveBuilder.BuildAndroid' } }
 if ($Week -eq 6) { $methods = @{ Generate='PickDoll.Editor.WeekSixBuilder.Generate'; Validate='PickDoll.Editor.WeekSixBuilder.Check'; Windows='PickDoll.Editor.WeekSixBuilder.BuildWindows'; Android='PickDoll.Editor.WeekSixBuilder.BuildAndroid' } }
 if ($Week -eq 7) { $methods = @{ Generate='PickDoll.Editor.WeekSevenBuilder.Generate'; Validate='PickDoll.Editor.WeekSevenBuilder.Check'; Windows='PickDoll.Editor.WeekSevenBuilder.BuildWindows'; Android='PickDoll.Editor.WeekSevenBuilder.BuildAndroid' } }
+if ($Week -eq 8) { $methods = @{ Generate='PickDoll.Editor.WeekEightBuilder.Generate'; Validate='PickDoll.Editor.WeekEightBuilder.Check'; Windows='PickDoll.Editor.WeekEightBuilder.BuildWindows'; Android='PickDoll.Editor.WeekEightBuilder.BuildAndroid' } }
 $logDirectory = Join-Path $projectPath 'Builds\Logs'
 New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 $logPath = Join-Path $logDirectory "Week$Week-$Task.log"
@@ -32,4 +33,5 @@ if ($Week -eq 4) { $markers = @{ Generate='PICKDOLL_WEEK04_SCENE_READY'; Validat
 if ($Week -eq 5) { $markers = @{ Generate='PICKDOLL_WEEK05_SCENE_READY'; Validate='PICKDOLL_WEEK05_VALIDATION_PASS'; Windows='PICKDOLL_WEEK05_WINDOWS_READY'; Android='PICKDOLL_WEEK05_ANDROID_READY' } }
 if ($Week -eq 6) { $markers = @{ Generate='PICKDOLL_WEEK06_SCENE_READY'; Validate='PICKDOLL_WEEK06_VALIDATION_PASS'; Windows='PICKDOLL_WEEK06_WINDOWS_READY'; Android='PICKDOLL_WEEK06_ANDROID_READY' } }
 if ($Week -eq 7) { $markers = @{ Generate='PICKDOLL_WEEK07_SCENE_READY'; Validate='PICKDOLL_WEEK07_VALIDATION_PASS'; Windows='PICKDOLL_WEEK07_WINDOWS_READY'; Android='PICKDOLL_WEEK07_ANDROID_READY' } }
+if ($Week -eq 8) { $markers = @{ Generate='PICKDOLL_WEEK08_SCENE_READY'; Validate='PICKDOLL_WEEK08_VALIDATION_PASS'; Windows='PICKDOLL_WEEK08_WINDOWS_READY'; Android='PICKDOLL_WEEK08_ANDROID_READY' } }
 if (-not (Select-String -LiteralPath $logPath -SimpleMatch $markers[$Task] -Quiet)) { throw "Expected success marker missing. See $logPath" }

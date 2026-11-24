@@ -24,6 +24,14 @@ namespace PickDoll
         public PrizeReceiver receiver;
         public bool automaticDelivery;
         public float returnSpeed=.48f;
+        public bool contactDescent;
+        public ClawContactProbe[] contactProbes;
+        public float contactForce=1.2f,contactDuration=.12f,hardContactForce=4.5f,descentTimeout=4.5f;
+        private float contactTime;
+        public string DescentStop {get;private set;}="";
+        public float PrizeContactForce {get;private set;}
+        public float StructureContactForce {get;private set;}
+        private void ClearContact(){contactTime=0;DescentStop="";PrizeContactForce=StructureContactForce=0;if(contactProbes!=null)foreach(var probe in contactProbes)probe.Clear();}
 
         public float openingTolerance=6;
         private float settledTime;
@@ -88,7 +96,7 @@ namespace PickDoll
                 float category = gripVariationEnabled ? Random.value : 1;
                 CurrentWeakGrip = gripVariationEnabled && (weakGripChance >= 1 || category < weakGripChance);
                 CurrentGripScale = EvaluateGrip(category, gripVariationEnabled ? Random.value : .5f);
-                elapsed = 0; verticalVelocity = 0; SetSpring(0); needsOpenSpace=false; Phase = automaticDelivery ? Stage.Preparing : Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
+                ClearContact();elapsed = 0; verticalVelocity = 0; SetSpring(0); needsOpenSpace=false; Phase = automaticDelivery ? Stage.Preparing : Stage.Lowering; if (!PassiveSuspension) machine.ReleaseControls(); }
             else if (Phase == Stage.Carry) { elapsed = 0; Phase = Stage.Opening; }
         }
         public void ResetCycle()
@@ -113,6 +121,7 @@ namespace PickDoll
                 if (!prizes[i].isKinematic) { prizes[i].linearVelocity = Vector3.zero; prizes[i].angularVelocity = Vector3.zero; prizes[i].WakeUp(); }
             }
             if(stock)stock.Restock();
+            ClearContact();
             Physics.SyncTransforms();
         }
         private void SetSpring(float target)
@@ -152,8 +161,19 @@ namespace PickDoll
                     break;
                 case Stage.Lowering:
                     if(automaticDelivery)SetSpring(0);
-                    MoveLift(bottomHeight, loweringSpeed, dt);
-                    if (height <= bottomHeight) { Phase = Stage.Closing; elapsed = 0; }
+                    float speed=loweringSpeed;bool stop=false;
+                    if(contactDescent) {
+                        PrizeContactForce=StructureContactForce=0;
+                        foreach(var probe in contactProbes){probe.Read(out var p,out var s);PrizeContactForce+=p;StructureContactForce+=s;}
+                        contactTime=PrizeContactForce>=contactForce?contactTime+dt:0;
+                        if(PrizeContactForce>.15f)speed=Mathf.Min(speed,.075f);
+                        if(StructureContactForce>=contactForce){DescentStop="STRUCTURE";stop=true;}
+                        else if(PrizeContactForce>=hardContactForce||contactTime>=contactDuration){DescentStop="PRIZE_CONTACT";stop=true;}
+                        else if(elapsed>=descentTimeout){DescentStop="TIME_LIMIT";stop=true;}
+                    }
+                    if(!stop)MoveLift(bottomHeight,speed,dt);
+                    if(height<=bottomHeight){DescentStop="DEPTH_LIMIT";stop=true;}
+                    if(stop){verticalVelocity=0;Phase=Stage.Closing;elapsed=0;}
                     break;
                 case Stage.Closing:
                     float progress = Mathf.Clamp01(elapsed / closingRamp);
@@ -176,7 +196,7 @@ namespace PickDoll
                     break;
                 case Stage.Repositioning:
                     MoveLift(topHeight,raisingSpeed,dt);
-                    bool home=machine.TravelTo(Vector2.zero,returnSpeed,dt);
+                    bool home=machine.TravelTo(machine.homePosition,returnSpeed,dt);
                     if(home&&height>=topHeight){Phase=Stage.Ready;elapsed=0;machine.ReleaseControls();}
                     break;
                 case Stage.Opening:

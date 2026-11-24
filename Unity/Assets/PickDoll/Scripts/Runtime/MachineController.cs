@@ -16,6 +16,7 @@ namespace PickDoll
         public float travelLimit = 0.31f;
         public float carrySpeed;
         public float acceleration;
+        public Vector2 homePosition;
         private Vector2 velocity;
         private Vector2 analog;
         public Vector2 Analog => analog;
@@ -37,7 +38,7 @@ namespace PickDoll
         public void ResetPosition()
         {
             ReleaseControls(); pendingDirection = Vector2.zero; yaw = 0;
-            carriage.localPosition = new Vector3(0, carriage.localPosition.y, 0);
+            carriage.localPosition = new Vector3(homePosition.x, carriage.localPosition.y, homePosition.y);
             if (claw) claw.localRotation = Quaternion.identity;
             UpdateMarker();
             var cycle = GetComponent<ClawCycle>(); if (cycle) cycle.ResetCycle();
