@@ -1,6 +1,6 @@
 # PickDoll Android — Unity
 
-현재 실행 씬은 `Assets/PickDoll/Scenes/Week07.unity`다. 배출구 위 최초 대기, 작고 투명한 상단 HUD, 곰·토끼·펭귄 7개 랜덤 배치와 로컬 누적 저장을 추가했다. CLI 빌드는 `-Week 7` 옵션을 사용한다. 검증 상태는 [7주차 보고서](../android-week-7-results.html)에 기록한다.
+현재 작업 씬은 `Assets/PickDoll/Scenes/Week08.unity`다. 대기 위치 통일·접촉 기반 하강·자연 배치의 PC 검사를 통과했고 Android 빌드·v2 서명·S26 설치 및 기존 7개 기록 보존을 확인했다. 갤럭시 탭에도 설치·실행했고 2026년 11월 25일 사용자 동작 확인으로 현재 범위를 마감했다. `-Week 8` 빌드를 사용하며 실제 검증 상태는 [8주차 보고서](../android-week-8-results.html)를 참고한다. 8주차 자동 검사는 `tools/Test-Week08.ps1`, UI 모사는 `-UiOnly -Width 906 -Height 1088`을 사용한다. 아래 7주차 안내는 이전 검증 버전의 기록이다.
 
 Unity 6.5 (`6000.5.5f1`) / URP 17.5.0 / Input System 1.19.0 / uGUI 2.5.0.
 
