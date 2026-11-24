@@ -28,13 +28,13 @@ figure{margin:12px 0}figcaption{font-size:13px;color:var(--muted);margin-top:8px
 <tr><td>폴드5</td><td>설치·실행·내부 화면, 접고 펼친 후 버튼 배치·이동·드래그</td><td>ADB·화면 캡처 + 사용자 정상 동작 및 전환 시험 확인</td></tr>
 <tr><td>갤럭시 탭 SM-X820</td><td>API 36·ARM64 호환, 동일 APK 설치·실행·큰 화면 배치·기본 동작</td><td>ADB·화면 캡처 + 사용자 “잘동작해” 확인</td></tr>
 </tbody></table></div><p class="muted">사용자 확인과 자동 검사를 구분해 기록했다. 장시간 발열·안정성, 실제 프레임률, 모든 입력 조합은 아직 검증하지 않았다. 60fps는 목표이며 측정 완료 수치가 아니다.</p></section>
-<section id="screens"><h2>04. 실제 실행 화면</h2><figure><img class="shot" src="android-week-1-s26.png" alt="S26 울트라에서 실행한 이동 프로토타입"><figcaption>S26 울트라 · 이동된 집게와 조준원, 터치 조작 UI. 인형은 고정된 임시 모델이다.</figcaption></figure>
-<details><summary>폴드5·갤럭시 탭 화면 보기</summary><div class="grid two gallery"><figure><img src="android-week-1-fold5-before.png" alt="폴드5 내부 화면의 PickDoll"><figcaption>폴드5 내부 화면 · 1812×2176 캡처</figcaption></figure><figure><img src="android-week-1-tablet.png" alt="갤럭시 탭에서 실행한 PickDoll"><figcaption>갤럭시 탭 SM-X820 · 사용자 시점 조작 후 캡처</figcaption></figure></div></details>
-<p><a href="android-week-1-preview.png">PC 세로 화면</a> · <a href="android-week-1-wide-preview.png">PC 넓은 화면</a></p></section>
+<section id="screens"><h2>04. 실제 실행 화면</h2><figure><img class="shot" src="../media/week-01/android-week-1-s26.png" alt="S26 울트라에서 실행한 이동 프로토타입"><figcaption>S26 울트라 · 이동된 집게와 조준원, 터치 조작 UI. 인형은 고정된 임시 모델이다.</figcaption></figure>
+<details><summary>폴드5·갤럭시 탭 화면 보기</summary><div class="grid two gallery"><figure><img src="../media/week-01/android-week-1-fold5-before.png" alt="폴드5 내부 화면의 PickDoll"><figcaption>폴드5 내부 화면 · 1812×2176 캡처</figcaption></figure><figure><img src="../media/week-01/android-week-1-tablet.png" alt="갤럭시 탭에서 실행한 PickDoll"><figcaption>갤럭시 탭 SM-X820 · 사용자 시점 조작 후 캡처</figcaption></figure></div></details>
+<p><a href="../media/week-01/android-week-1-preview.png">PC 세로 화면</a> · <a href="../media/week-01/android-week-1-wide-preview.png">PC 넓은 화면</a></p></section>
 <section id="artifacts"><h2>05. 산출물과 재현 방법</h2><div class="table-wrap"><table><thead><tr><th>산출물</th><th>위치 / 내용</th></tr></thead><tbody>
-<tr><td>Unity 프로젝트</td><td><code>Unity/</code> · <a href="Unity/README.md">실행 안내</a></td></tr>
+<tr><td>Unity 프로젝트</td><td><code>Unity/</code> · <a href="../../../Unity/README.md">실행 안내</a></td></tr>
 <tr><td>기본 씬</td><td><code>Unity/Assets/PickDoll/Scenes/Week01.unity</code></td></tr>
-<tr><td>개발용 APK</td><td><a href="Unity/Builds/Android/PickDoll-week01.apk">PickDoll-week01.apk</a> · 41,955,365 bytes / 40.0 MiB</td></tr>
+<tr><td>개발용 APK</td><td><a href="../../../Unity/Builds/Android/PickDoll-week01.apk">PickDoll-week01.apk</a> · 41,955,365 bytes / 40.0 MiB</td></tr>
 <tr><td>버전·환경</td><td>0.1.0 / versionCode 1 / minSdk 26 / targetSdk 36 / ARM64 IL2CPP / OpenGL ES 3</td></tr>
 <tr><td>검증 기록</td><td><code>Unity/Builds/Checks/</code> · 씬 검사·PC 실행·APK 및 기기 확인 기록</td></tr>
 <tr><td>빌드 로그</td><td><code>Unity/Builds/Logs/</code> · 빌드 성공 표식 확인</td></tr>
@@ -43,5 +43,5 @@ figure{margin:12px 0}figcaption{font-size:13px;color:var(--muted);margin-top:8px
 <p>세 Android 기기의 시작 로그에서 <code>AssetPackManager</code> 클래스 누락 오류를 확인했다. 현재 앱은 자산 분할 다운로드를 사용하지 않고, 오류 이후 화면과 기본 조작은 정상 확인했다. 따라서 이동 프로토타입의 1주차 마감은 가능하다고 판단하되, <strong>공개 출시 전 원인과 엔진·배포 설정을 재검증해야 하는 미해결 항목</strong>으로 남긴다. 오류가 완전히 없는 빌드라고 보고하지 않는다.</p>
 <p class="muted">관련 기능 설명: <a href="https://docs.unity.com/en-us/engine/6000.5/script-reference/unityengine/android/androidassetpacks">Unity AndroidAssetPacks 문서</a>. Google Play Games 업적과는 별도의 자산 다운로드 기능이다.</p><p>현재 HUD는 Unity 기본 글꼴을 사용한 영문 임시 화면이며 인형·기계 외형은 최종 미술이 아니다.</p></section>
 <section id="next"><h2>07. 2주차 착수 항목</h2><ol><li>집게의 하강·상승 제어와 손가락 닫힘을 구현한다.</li><li>임시 인형에 질량·충돌체를 붙여 실제 접촉으로 집히게 한다.</li><li>잡기 → 들어 올리기 → 이동을 검증하고, 미끄러짐·놓침·끼임을 조정한다.</li><li>기본 인형을 운반할 수 있는지 확인한 뒤 콘텐츠와 도감 개발로 넘어간다.</li></ol><p>2주차 완료 목표는 기본 인형을 실제 물리 접촉으로 잡고 들어 이동하는 시제품이다. 배출구·획득 집계까지의 한 사이클은 전체 계획의 3주차 범위다.</p></section>
-<footer><p>PickDoll Android · 1주차 완료 보고서 · 2026년 11월 21일</p><p><a href="android-project-plan.html">전체 제작 계획서</a> · <a href="Unity/README.md">프로젝트 실행 안내</a></p><button class="print" onclick="window.print()">인쇄 / PDF 저장</button></footer>
+<footer><p>PickDoll Android · 1주차 완료 보고서 · 2026년 11월 21일</p><p><a href="../plans/android-project-plan.html">전체 제작 계획서</a> · <a href="../../../Unity/README.md">프로젝트 실행 안내</a></p><button class="print" onclick="window.print()">인쇄 / PDF 저장</button></footer>
 </main></body></html>
