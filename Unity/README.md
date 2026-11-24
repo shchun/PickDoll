@@ -1,6 +1,6 @@
 # PickDoll Android — Unity
 
-현재 작업 씬은 `Assets/PickDoll/Scenes/Week08.unity`다. 대기 위치 통일·접촉 기반 하강·자연 배치의 PC 검사를 통과했고 Android 빌드·v2 서명·S26 설치 및 기존 7개 기록 보존을 확인했다. 갤럭시 탭에도 설치·실행했고 2026년 11월 25일 사용자 동작 확인으로 현재 범위를 마감했다. `-Week 8` 빌드를 사용하며 실제 검증 상태는 [8주차 보고서](../android-week-8-results.html)를 참고한다. 8주차 자동 검사는 `tools/Test-Week08.ps1`, UI 모사는 `-UiOnly -Width 906 -Height 1088`을 사용한다. 아래 7주차 안내는 이전 검증 버전의 기록이다.
+현재 작업 씬은 `Assets/PickDoll/Scenes/Week09.unity`다. 획득 피드백·음향/진동 설정과 사진 기반 집게·외장의 PC 최종 검사를 통과했다. S26에 0.9.0 / code 11을 설치·실행하고 기존 영수증 20개 보존 및 진동 권한을 확인했다. 품평에서 집계·성공 효과·진동 체감·미세 회전 개선 요청을 받았고, 사용자 지시로 10주차에 반영한다. 9주차 현재 범위로 PR을 준비한다. `-Week 9` 빌드와 `tools/Test-Week09.ps1`을 사용한다. [9주차 보고서](../android-week-9-results.html)에 실제 검증 상태를 기록한다. 아래 설명은 이전 검증 버전의 기록이다.
 
 Unity 6.5 (`6000.5.5f1`) / URP 17.5.0 / Input System 1.19.0 / uGUI 2.5.0.
 
