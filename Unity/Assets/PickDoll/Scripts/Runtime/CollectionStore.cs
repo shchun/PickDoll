@@ -22,7 +22,7 @@ namespace PickDoll
         public static string DefaultPath {
             get {
                 var args=Environment.GetCommandLineArgs();
-                if(args.Contains("--pickdoll-week07-test")||args.Contains("--pickdoll-week07-ui")||args.Contains("--pickdoll-week08-test")||args.Contains("--pickdoll-week08-ui")||args.Contains("--pickdoll-week09-test")||args.Contains("--pickdoll-week09-ui"))
+                if(args.Contains("--pickdoll-week10-test")||args.Contains("--pickdoll-week10-ui")||args.Contains("--pickdoll-week07-test")||args.Contains("--pickdoll-week07-ui")||args.Contains("--pickdoll-week08-test")||args.Contains("--pickdoll-week08-ui")||args.Contains("--pickdoll-week09-test")||args.Contains("--pickdoll-week09-ui"))
                     return System.IO.Path.Combine(System.IO.Path.GetTempPath(),testDirectory,"collection.json");
                 return System.IO.Path.Combine(Application.persistentDataPath,"collection-v1.json");
             }

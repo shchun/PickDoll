@@ -10,6 +10,7 @@ namespace PickDoll
         public Vector2 holeCenter = new Vector2(-.23f,-.22f);
         public Vector2 holeSize = new Vector2(.36f,.36f);
         public float outsideFaceZ = -.50f;
+        public Collider pickupFloor;
         private readonly HashSet<string> receipts = new HashSet<string>();
         private bool initialized;
         public bool persistentProgress;
@@ -20,6 +21,16 @@ namespace PickDoll
         private void Awake()=>Initialize();
         public void BeginNewRound(){Initialize();foreach(var body in prizes)body.GetComponent<PrizeIdentity>().Rearm();}
         public bool OverHole(Vector2 aim,float margin=.025f)=>Mathf.Abs(aim.x-holeCenter.x)<holeSize.x*.5f+margin&&Mathf.Abs(aim.y-holeCenter.y)<holeSize.y*.5f+margin;
+        public void TouchPickupFloor(PrizeIdentity prize)
+        {
+            Initialize();
+            if(!prize || prize.Delivered || !prize.EnteredChute)return;
+            bool added;
+            if(Store!=null){if(!Store.Commit(prize.Ticket,prize.SpeciesId,out added))return;}
+            else added=receipts.Add(prize.Ticket);
+            prize.Delivered=true;
+            if(added){Debug.Log($"PICKDOLL_ACQUIRED count={Count} prize={prize.displayName} floor_contact=true");Acquired?.Invoke(prize);}
+        }
         public void Probe()
         {
             Initialize();
@@ -35,7 +46,7 @@ namespace PickDoll
                     prize.EnteredChute=true;
                     if(Debug.isDebugBuild)Debug.Log($"PICKDOLL_CHUTE_ENTRY {prize.displayName} at={body.position}");
                 }
-                if(!prize.EnteredChute||!exitZone.bounds.Intersects(bounds))continue;
+                if(pickupFloor || !prize.EnteredChute||!exitZone.bounds.Intersects(bounds))continue;
                 // The whole prize must clear the front face, not just touch a trigger with one foot.
                 if(first||bounds.max.z>=outsideFaceZ)continue;
                 bool added;
