@@ -34,7 +34,7 @@ def slack_text(run):
         raise NotifyError('Unexpected Actions result URL.')
     text = f"PickDoll 클라우드 빌드: {result}\n커밋: {sha}\n<{url}|Actions 결과·산출물 확인>"
     if conclusion == 'success':
-        text += '\nAndroid·Windows 결과 파일은 실행 페이지의 Artifacts에서 받을 수 있습니다.'
+        text += '\n결과 파일은 실행 페이지의 Artifacts에서 받을 수 있습니다.'
     elif conclusion in {'failure', 'timed_out'}:
         text += '\n재실행 전 Unity Build History에서 기존 빌드 상태를 확인해 주세요.'
     return text
