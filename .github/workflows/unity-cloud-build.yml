@@ -44,6 +44,9 @@ jobs:
           OPERATION: ${{ inputs.operation || 'inspect' }}
           PLATFORM: ${{ inputs.platform || 'both' }}
         run: python3 .github/scripts/unity_cloud.py --operation "$OPERATION" --platform "$PLATFORM"
+      - name: Verify Android app identity and existing test signature
+        if: success() && hashFiles('ci-output/PickDoll.apk') != ''
+        run: python3 .github/scripts/verify_apk.py ci-output/PickDoll.apk
       - name: Save builds and sanitized reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
