@@ -1,0 +1,39 @@
+name: Unity Cloud Slack Notification
+
+on:
+  workflow_run:
+    workflows: [Unity Cloud Build]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Actions run ID to watch and notify'
+        required: true
+        type: string
+  push:
+    branches: [codex/github-actions-ci]
+    paths: ['.github/workflows/unity-cloud-notify.yml']
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  notify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       startsWith(github.event.workflow_run.display_title, 'PickDoll / build /') &&
+       format('{0}', github.event.workflow_run.id) != vars.UNITY_SLACK_MANUAL_RUN_ID)
+    runs-on: ubuntu-latest
+    timeout-minutes: 220
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Wait for result and send Slack notification
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WATCH_RUN_ID: ${{ inputs.run_id || github.event.workflow_run.id }}
+        run: python3 .github/scripts/notify_slack.py --run-id "$WATCH_RUN_ID"
