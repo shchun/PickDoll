@@ -183,3 +183,11 @@ S26 실제 플레이 로그에서 인형 2개 배출과 누적 1→2 증가를 �
 [11주차 진행 기록](../docs/android/reports/android-week-11-results.html) · [인형 확장 계획](../docs/android/plans/android-project-plan.html#week11-plush-feedback)
 
 Week 11 품평 보완(0.11.1): 배출 완료 인형은 1.4초 뒤 정리하고, 7개 모두 배출된 후 자동 보충합니다. 성공·콤보·보충 카드는 게임 영역 중앙에 표시합니다. 원본 아케이드 효과음 7개는 `tools/Generate-ArcadeAudio.py`(numpy/scipy)로 재생성하며 SOUND 설정에 연동됩니다.
+
+## 12주차 · 토끼 장난감집
+
+1번 시안을 기준으로 얇은 둥근 프레임·작은 귀·크림/핑크 외장과 얕은 조작 선반을 적용합니다. 높은 시점에서는 앞 간판이 반투명해지고 카메라는 전시 공간을 더 크게 보여줍니다. 새 장식은 렌더링 전용이며 기존 집기·배출 충돌 구조를 보존합니다.
+
+`./tools/Run-Unity.ps1 -Week 12 -Task Preview`는 플레이어 빌드 없이 에디터 미리보기와 배출·안정성 검사를 진행합니다. `-Task Windows` / `-Task Android`는 마감 빌드, `./tools/Test-Week12.ps1`는 기존 게임플레이 회귀 검사입니다.
+
+[12주차 진행 기록](../docs/android/reports/android-week-12-results.html) · [선택 시안](../docs/android/plans/cabinet-concepts.html)

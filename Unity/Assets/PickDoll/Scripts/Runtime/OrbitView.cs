@@ -15,6 +15,7 @@ namespace PickDoll
         public float framingWidth = 1.75f;
         public bool pinchZoom;
         public float maxZoom=2;
+        [Range(0,.3f)] public float zoomScreenOffset=.15f;
         public float Zoom { get; private set; }=1;
         private float baseFieldOfView;
         public void ZoomByRatio(float ratio) { if(!pinchZoom||float.IsNaN(ratio)||float.IsInfinity(ratio)||ratio<=0)return; Zoom=Mathf.Clamp(Zoom*ratio,1,maxZoom);Apply(); }
@@ -51,8 +52,15 @@ namespace PickDoll
             var rotation = Quaternion.Euler(elevation, yaw, 0);
             transform.position = target.position + rotation * new Vector3(0, 0, -distance);
             transform.LookAt(target);
+            // Move the enlarged scene down in the game viewport, cropping the cabinet controls.
+            // Keep the orbit pivot fixed so dragging and machine movement keep their existing meaning.
+            camera.ResetProjectionMatrix();
+            var projection=camera.projectionMatrix;
+            projection[1,2]+=2*zoomScreenOffset*Mathf.InverseLerp(1,maxZoom,Zoom);
+            camera.projectionMatrix=projection;
         }
         private void LateUpdate() { Apply(); }
+        private void OnDisable(){var camera=GetComponent<Camera>();if(camera)camera.ResetProjectionMatrix();}
     }
 
     public sealed class OrbitDragArea : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, IScrollHandler

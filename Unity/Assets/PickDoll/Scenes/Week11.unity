@@ -13280,6 +13280,7 @@ MonoBehaviour:
   framingWidth: 1.95
   pinchZoom: 1
   maxZoom: 2
+  zoomScreenOffset: 0.15
 --- !u!81 &935867655
 AudioListener:
   m_ObjectHideFlags: 0
