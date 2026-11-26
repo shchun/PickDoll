@@ -27,6 +27,7 @@ namespace PickDoll
                 Bounds b;
                 if(c is SphereCollider sphere)b=new Bounds(position+rotation*sphere.center,Vector3.one*sphere.radius*2);
                 else if(c is CapsuleCollider capsule){var axis=rotation*(capsule.direction==0?Vector3.right:capsule.direction==1?Vector3.up:Vector3.forward);axis=new Vector3(Mathf.Abs(axis.x),Mathf.Abs(axis.y),Mathf.Abs(axis.z));var extents=axis*Mathf.Max(0,capsule.height*.5f-capsule.radius)+Vector3.one*capsule.radius;b=new Bounds(position+rotation*capsule.center,extents*2);}
+                else if(c is BoxCollider box){var extent=Vector3.zero;foreach(float x in new[]{-1f,1f})foreach(float y in new[]{-1f,1f})foreach(float z in new[]{-1f,1f}){var v=rotation*Vector3.Scale(box.size*.5f,new Vector3(x,y,z));extent=Vector3.Max(extent,new Vector3(Mathf.Abs(v.x),Mathf.Abs(v.y),Mathf.Abs(v.z)));}b=new Bounds(position+rotation*box.center,extent*2);}
                 else continue;
                 if(first){result=b;first=false;}else result.Encapsulate(b);
             }

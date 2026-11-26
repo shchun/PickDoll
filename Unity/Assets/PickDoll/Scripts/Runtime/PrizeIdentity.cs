@@ -10,7 +10,8 @@ namespace PickDoll
         public string Ticket { get; private set; }
         public bool EnteredChute { get; internal set; }
         public bool Delivered { get; internal set; }
+        public event Action Rearmed;
         public void EnsureTicket(){if(string.IsNullOrEmpty(Ticket))Rearm();}
-        public void Rearm(){Ticket=Guid.NewGuid().ToString("N");EnteredChute=false;Delivered=false;}
+        public void Rearm(){Ticket=Guid.NewGuid().ToString("N");EnteredChute=false;Delivered=false;Rearmed?.Invoke();}
     }
 }
