@@ -34,10 +34,29 @@ namespace PickDoll
             for(int i=0;i<7;i++){var p=cycle.prizes[i];p.isKinematic=false;p.rotation=Quaternion.Euler(i%2==0?90:0,0,0);var shape=PrizeStock.BoundsAt(p,Vector3.zero,p.rotation);p.position=new Vector3(-.23f-shape.center.x,.46f,-.25f-shape.center.z);p.linearVelocity=Vector3.zero;Physics.SyncTransforms();yield return WaitReceipt(before+i,10);bool arrived=receiver.Count==before+i+1;ok&=arrived;report.AppendLine("batch_"+i+"="+arrived+"; pos="+p.position+"; rotation="+p.rotation.eulerAngles);}
             float limit=Time.realtimeSinceStartup+15;while(auto.RefillCount==0&&Time.realtimeSinceStartup<limit)yield return null;ok&=auto.RefillCount==1&&receiver.Count==before+7&&audio.AcquisitionPlays==sounds&&audio.RefillPlays==0&&cycle.prizes.All(p=>!p.GetComponent<PrizeIdentity>().Delivered&&!p.GetComponent<PrizeDeliveryPresentation>().Hidden&&!p.isKinematic&&p.GetComponents<Collider>().All(c=>c.enabled));report.AppendLine("refill="+auto.RefillCount+"; total="+receiver.Count+"; silence="+(audio.AcquisitionPlays==sounds));yield return new WaitForSeconds(.25f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"week11-restock.png"));yield return new WaitForSeconds(2);ok&=auto.RefillCount==1&&receiver.Count==before+7;File.WriteAllText(Path.Combine(output,"flow.txt"),(ok?"PASS\n":"FAIL\n")+report);Application.Quit(ok?0:1);
         }
+        private IEnumerator CameraFraming(){
+            var view=FindAnyObjectByType<OrbitView>();var cam=view.GetComponent<Camera>();float offset=view.zoomScreenOffset;bool ok=true;
+            yield return new WaitForSeconds(.4f);
+            foreach(var pose in new[]{new Vector2(12,55),new Vector2(65,20),new Vector2(180,55)}){
+                view.ZoomByRatio(1/view.Zoom);view.yaw=pose.x;view.elevation=pose.y;view.Apply();
+                var normal=cam.WorldToViewportPoint(view.target.position);var position=view.transform.position;var rotation=view.transform.rotation;
+                view.ZoomByRatio(2);view.zoomScreenOffset=0;view.Apply();
+                if(pose.x==12){yield return new WaitForSeconds(.2f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,$"zoom-before-{Screen.width}x{Screen.height}.png"));}
+                view.zoomScreenOffset=offset;view.Apply();yield return null;
+                var zoomed=cam.WorldToViewportPoint(view.target.position);
+                bool framed=Mathf.Abs(normal.y-.5f)<.005f&&zoomed.y>.30f&&zoomed.y<.39f&&Mathf.Abs(zoomed.x-.5f)<.005f&&Vector3.Distance(position,view.transform.position)<.001f&&Quaternion.Angle(rotation,view.transform.rotation)<.001f;
+                var screen=cam.WorldToScreenPoint(view.target.position);var ray=cam.ScreenPointToRay(screen);framed&=Vector3.Cross(ray.direction,(view.target.position-ray.origin).normalized).magnitude<.001f;
+                ok&=framed;report.AppendLine($"pose={pose}; normal={normal}; zoomed={zoomed}; stable_orbit_and_ray={framed}");
+                if(pose.x==12){yield return new WaitForSeconds(.2f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,$"zoom-after-{Screen.width}x{Screen.height}.png"));}
+            }
+            view.NextPreset();var reset=cam.WorldToViewportPoint(view.target.position);ok&=view.Zoom==1&&Mathf.Abs(reset.y-.5f)<.005f;
+            report.AppendLine("view_reset_restores_center="+(view.Zoom==1&&Mathf.Abs(reset.y-.5f)<.005f));
+            File.WriteAllText(Path.Combine(output,$"zoom-framing-{Screen.width}x{Screen.height}.txt"),(ok?"PASS\n":"FAIL\n")+report);Application.Quit(ok?0:1);
+        }
         private IEnumerator Start()
         {
             yield return null;cycle=FindAnyObjectByType<ClawCycle>();receiver=cycle.receiver;receiver.Acquired+=_=>events++;cycle.gripVariationEnabled=false;var feedback=FindAnyObjectByType<AcquisitionFeedback>();
-            output=Path.Combine(Application.dataPath,"..","Checks");Directory.CreateDirectory(output);if(Environment.GetCommandLineArgs().Contains("--pickdoll-week11-flow")){yield return Flow();yield break;}if(Environment.GetCommandLineArgs().Contains("--pickdoll-week11-targeting")){yield return Targeting();yield break;}
+            output=Path.Combine(Application.dataPath,"..","Checks");Directory.CreateDirectory(output);if(Environment.GetCommandLineArgs().Contains("--pickdoll-week11-camera")){yield return CameraFraming();yield break;}if(Environment.GetCommandLineArgs().Contains("--pickdoll-week11-flow")){yield return Flow();yield break;}if(Environment.GetCommandLineArgs().Contains("--pickdoll-week11-targeting")){yield return Targeting();yield break;}
             // Test the saved startup scene before any fixture/reset can repair its poses.
             yield return new WaitForSeconds(2.5f);
             bool startup=Mathf.Abs(cycle.hub.position.y-cycle.topHeight)<.03f&&Vector2.Distance(cycle.machine.Aim,receiver.holeCenter)<.003f&&!cycle.CanPress;

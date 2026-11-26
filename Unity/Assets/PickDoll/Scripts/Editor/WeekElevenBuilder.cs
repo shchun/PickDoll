@@ -30,7 +30,7 @@ namespace PickDoll.Editor {
    foreach(var name in new[]{"Cabinet Front Left","Front fascia left"}){var part=GameObject.Find(name).transform;var pos=part.position;pos.x=-.485f;part.position=pos;var size=part.localScale;size.x=.03f;part.localScale=size;}
    foreach(var name in new[]{"Cabinet Front Right","Front fascia right"}){var part=GameObject.Find(name).transform;var pos=part.position;pos.x=.25f;part.position=pos;var size=part.localScale;size.x=.50f;part.localScale=size;}
    c.stock.ApplyNatural(11);
-   PlayerSettings.bundleVersion="0.11.1";PlayerSettings.Android.bundleVersionCode=14;Physics.SyncTransforms();EditorSceneManager.SaveScene(scene,ScenePath);EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(ScenePath,true)};AssetDatabase.SaveAssets();Debug.Log("PICKDOLL_WEEK11_SCENE_READY");
+   PlayerSettings.bundleVersion="0.11.2";PlayerSettings.Android.bundleVersionCode=15;Physics.SyncTransforms();EditorSceneManager.SaveScene(scene,ScenePath);EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(ScenePath,true)};AssetDatabase.SaveAssets();Debug.Log("PICKDOLL_WEEK11_SCENE_READY");
   }
   private static AudioClip Clip(string name)=>AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/PickDoll/Audio/"+name+".wav");
   private static Rigidbody Make(int kind){
