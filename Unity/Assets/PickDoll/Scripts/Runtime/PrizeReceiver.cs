@@ -17,9 +17,10 @@ namespace PickDoll
         public CollectionStore Store {get;private set;}
         public int Count => Store!=null?Store.Total:receipts.Count;
         public event Action<PrizeIdentity> Acquired;
+        public event Action RoundStarted;
         public void Initialize(){if(initialized)return;initialized=true;if(persistentProgress)Store=new CollectionStore(CollectionStore.DefaultPath);foreach(var body in prizes)body.GetComponent<PrizeIdentity>().EnsureTicket();}
         private void Awake()=>Initialize();
-        public void BeginNewRound(){Initialize();foreach(var body in prizes)body.GetComponent<PrizeIdentity>().Rearm();}
+        public void BeginNewRound(){Initialize();foreach(var body in prizes)body.GetComponent<PrizeIdentity>().Rearm();RoundStarted?.Invoke();}
         public bool OverHole(Vector2 aim,float margin=.025f)=>Mathf.Abs(aim.x-holeCenter.x)<holeSize.x*.5f+margin&&Mathf.Abs(aim.y-holeCenter.y)<holeSize.y*.5f+margin;
         public void TouchPickupFloor(PrizeIdentity prize)
         {

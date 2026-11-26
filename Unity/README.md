@@ -171,3 +171,15 @@ S26 실제 플레이 로그에서 인형 2개 배출과 누적 1→2 증가를 �
 최종 받침대 바닥 접촉 획득, 흑백 토끼 마스코트·인형, 천 표면·작은 눌림, 중앙 축하 연출·이중 진동과 미세 관성 회전을 적용한다. Windows 통합 검사·Android 빌드 및 서명 검사 통과. 갤럭시 탭 설치·실행과 기존 27개 기록 보존 확인, 실기기 품평 대기. [10주차 진행 기록](../docs/android/reports/android-week-10-results.html).
 
 `./tools/Run-Unity.ps1 -Week 10 -Task Windows` 또는 `-Task Android`로 빌드하고, `./tools/Test-Week10.ps1`로 Windows 통합 검사를 실행한다.
+
+## 11주차
+
+신규 인형 4종을 추가해 기존 인형과 7종·7개로 구성합니다. COLLECTION은 미획득 실루엣·종류별 수·드래그 회전 미리보기를 제공합니다. 도감에서 물리와 게임 입력을 일시 정지하며 콤보 시간은 실시간 기준으로 흐릅니다. 새 판·앱 전환 시 콤보만 종료하고 수집 기록은 유지합니다.
+
+실제 획득 사이 10초 이내면 2 COMBO부터 증가합니다. 성공 카드 큐와 독립적으로 계산하며 같은 획득 ID는 중복 집계하지 않습니다. 토출구 경사로와 윗턱을 조정해 긴 토끼가 서서 통과할 여유도 확보했습니다.
+
+`./tools/Run-Unity.ps1 -Week 11 -Task Windows` 또는 `-Task Android`로 빌드합니다. `./tools/Test-Week11.ps1`은 물리·도감·콤보 통합 검사, `-UiOnly -Width 876 -Height 1400`은 도감 안전 영역 검사, `-Targeting`은 당근 토끼의 별도 접근 위치 검사입니다.
+
+[11주차 진행 기록](../docs/android/reports/android-week-11-results.html) · [인형 확장 계획](../docs/android/plans/android-project-plan.html#week11-plush-feedback)
+
+Week 11 품평 보완(0.11.1): 배출 완료 인형은 1.4초 뒤 정리하고, 7개 모두 배출된 후 자동 보충합니다. 성공·콤보·보충 카드는 게임 영역 중앙에 표시합니다. 원본 아케이드 효과음 7개는 `tools/Generate-ArcadeAudio.py`(numpy/scipy)로 재생성하며 SOUND 설정에 연동됩니다.

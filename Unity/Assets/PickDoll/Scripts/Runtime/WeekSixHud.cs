@@ -10,6 +10,7 @@ namespace PickDoll
         public OrbitView orbit;
         public bool compactHeader;
         private ClawCycle cycle;
+        private AutomaticRestock restock;
         private Font font;
         private RectTransform safe;
         private Rect previousSafe;
@@ -21,7 +22,7 @@ namespace PickDoll
         private readonly Color cream=new Color(1,.94f,.91f);
         private readonly Color plum=new Color(.22f,.10f,.20f);
         private void Awake() {
-            Application.targetFrameRate=60;cycle=machine.GetComponent<ClawCycle>();font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            restock=machine.GetComponent<AutomaticRestock>();Application.targetFrameRate=60;cycle=machine.GetComponent<ClawCycle>();font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             var events=new GameObject("Input Events",typeof(EventSystem),typeof(InputSystemUIInputModule));events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             var canvas=new GameObject("PickDoll Touch HUD",typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));canvas.GetComponent<Canvas>().renderMode=RenderMode.ScreenSpaceOverlay;
             var scaler=canvas.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(900,1600);scaler.matchWidthOrHeight=.5f;
@@ -72,6 +73,7 @@ namespace PickDoll
             grab.interactable=cycle.CanPress;grabText.text=cycle.Busy?"ON MY WAY...":cycle.CanPress?"GRAB!":"MOVE TO AIM";
             grabText.fontSize=cycle.Busy||!cycle.CanPress?26:38;
             status.text=cycle.Phase==ClawCycle.Stage.Ready?"READY FOR A LITTLE WIN?":cycle.Status;
+            if(restock&&restock.WaitingForDelivery)status.text="FINISHING DELIVERY...";
             if(cycle.receiver.Store!=null&&cycle.receiver.Store.Error!=null)status.text="SAVE ERROR / KEEP APP DATA";
             zoomText.text=orbit.Zoom>1.01f?$"ZOOM {orbit.Zoom:0.0}x  /  VIEW TO RESET":"DRAG TO LOOK  /  PINCH TO ZOOM";
         }
