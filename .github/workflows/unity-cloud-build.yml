@@ -2,6 +2,17 @@ name: Unity Cloud Build
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Inspect settings, apply agreed settings, or build'
+        type: choice
+        options: [inspect, configure, build]
+        default: build
+      platform:
+        description: 'Build platform'
+        type: choice
+        options: [both, windows, android]
+        default: both
   push:
     branches: [codex/github-actions-ci]
     paths:
@@ -16,23 +27,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  inspect:
-    name: Inspect Unity connection (no build)
+  cloud:
+    name: Unity Cloud ${{ inputs.operation || 'inspect' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 200
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Inspect saved build configurations
+      - name: Inspect or build on Unity Cloud
         env:
           UNITY_BUILD_API_KEY: ${{ secrets.UNITY_BUILD_API_KEY }}
           UNITY_CLOUD_PROJECT_ID: ${{ vars.UNITY_CLOUD_PROJECT_ID }}
-        run: python3 .github/scripts/unity_cloud.py
-      - name: Save sanitized inspection
+          OPERATION: ${{ inputs.operation || 'inspect' }}
+          PLATFORM: ${{ inputs.platform || 'both' }}
+        run: python3 .github/scripts/unity_cloud.py --operation "$OPERATION" --platform "$PLATFORM"
+      - name: Save builds and sanitized reports
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: unity-cloud-inspection
-          path: ci-output/inspection.json
+          name: PickDoll-cloud-${{ inputs.platform || 'both' }}-${{ github.run_id }}
+          path: |
+            ci-output/inspection.json
+            ci-output/builds.json
+            ci-output/SHA256SUMS.txt
+            ci-output/PickDoll.apk
+            ci-output/PickDoll-Windows-x64.zip
           retention-days: 7
-          if-no-files-found: error
+          if-no-files-found: ignore
