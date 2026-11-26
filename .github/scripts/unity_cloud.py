@@ -170,6 +170,8 @@ def select_targets(summary, platform):
             raise CloudError('Disable auto-build and enable Unity version auto-detection: ' + t['id'])
         if t['operating_system'] != 'windows' or 'micro' not in str(t['machine_type']).lower():
             raise CloudError('Use a Windows Micro builder to keep the expected free-tier cost: ' + t['id'])
+        if target_platform == 'android' and t.get('android_settings', {}).get('buildAppBundle'):
+            raise CloudError('Disable AAB output for the test APK.')
         if target_platform == 'android' and not t['signing_configured']:
             raise CloudError('Android signing credentials are missing.')
         targets.append(t)
@@ -253,9 +255,11 @@ def build(client, summary, platform, output, revision, branch, timeout):
         client.download(link['href'], raw)
         result = package_primary(raw, output, target['platform'])
         raw.unlink()
+        with result.open('rb') as artifact:
+            digest = hashlib.file_digest(artifact, 'sha256').hexdigest()
         records.append({'platform': target['platform'], 'build': number, 'commit': revision,
                         'unity_version': status.get('unityVersion'), 'file': result.name,
-                        'sha256': hashlib.file_digest(result.open('rb'), 'sha256').hexdigest()})
+                        'sha256': digest})
         (output / 'builds.json').write_text(json.dumps(records, indent=2) + '\n', encoding='utf-8')
         (output / 'SHA256SUMS.txt').write_text(''.join(r['sha256'] + '  ' + r['file'] + '\n' for r in records), encoding='utf-8')
     print('Cloud builds and artifact integrity checks completed.', flush=True)
