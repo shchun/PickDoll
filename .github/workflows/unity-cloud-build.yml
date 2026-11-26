@@ -1,4 +1,5 @@
 name: Unity Cloud Build
+run-name: PickDoll / ${{ inputs.operation || 'inspect' }} / ${{ inputs.platform || 'both' }}
 
 on:
   workflow_dispatch:
