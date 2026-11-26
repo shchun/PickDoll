@@ -1,0 +1,38 @@
+name: Unity Cloud Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/github-actions-ci]
+    paths:
+      - '.github/workflows/unity-cloud-build.yml'
+      - '.github/scripts/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pickdoll-unity-cloud
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    name: Inspect Unity connection (no build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Inspect saved build configurations
+        env:
+          UNITY_BUILD_API_KEY: ${{ secrets.UNITY_BUILD_API_KEY }}
+          UNITY_CLOUD_PROJECT_ID: ${{ vars.UNITY_CLOUD_PROJECT_ID }}
+        run: python3 .github/scripts/unity_cloud.py
+      - name: Save sanitized inspection
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: unity-cloud-inspection
+          path: ci-output/inspection.json
+          retention-days: 7
+          if-no-files-found: error
