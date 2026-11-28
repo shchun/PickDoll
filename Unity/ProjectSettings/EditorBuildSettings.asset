@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PickDoll/Scenes/Week12.unity
-    guid: 2d779d7886ceeb4479465d0a2e2e348b
+    path: Assets/PickDoll/Scenes/Week13.unity
+    guid: 2b83cf03b9cd1dd46a4fd031e9b4c41f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

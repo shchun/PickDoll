@@ -1,0 +1,7 @@
+PASS res/mipmap-hdpi-v4/ic_launcher_foreground.png (162, 162)
+PASS res/mipmap-ldpi-v4/ic_launcher_foreground.png (81, 81)
+PASS res/mipmap-mdpi-v4/ic_launcher_foreground.png (108, 108)
+PASS res/mipmap-xhdpi-v4/ic_launcher_foreground.png (216, 216)
+PASS res/mipmap-xxhdpi-v4/ic_launcher_foreground.png (324, 324)
+PASS res/mipmap-xxxhdpi-v4/ic_launcher_foreground.png (432, 432)
+ADAPTIVE_ICON_LAYERS_PASS densities=6

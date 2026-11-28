@@ -16,7 +16,7 @@ namespace PickDoll
             bool cleared=allCollected&&cycle.prizes.All(p=>p.GetComponent<PrizeDeliveryPresentation>().Hidden);
             if(!cleared||feedback.HasPending){readyTime=0;return;}
             readyTime+=dt;if(readyTime<.5f)return;
-            cycle.machine.ResetPosition();readyTime=0;WaitingForDelivery=false;RefillCount++;feedback.ShowRestock();
+            cycle.machine.ResetPosition("automatic_refill");readyTime=0;WaitingForDelivery=false;RefillCount++;feedback.ShowRestock();
             Debug.Log("PICKDOLL_AUTO_RESTOCK count="+RefillCount+" collected="+cycle.receiver.Count);
         }
         private void Update()=>Tick(Time.deltaTime);

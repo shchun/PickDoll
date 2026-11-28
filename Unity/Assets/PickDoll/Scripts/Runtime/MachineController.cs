@@ -35,8 +35,9 @@ namespace PickDoll
         public void Rotate(HoldControl source, float direction, bool pressed) { if (GetComponent<ClawCycle>()?.PassiveSuspension == true) return; if (pressed) turns[source] = direction; else turns.Remove(source); }
         public void ToggleFine() { Fine = !Fine; }
         public void ReleaseControls() { analog=Vector2.zero; held.Clear(); turns.Clear(); pendingDirection = Vector2.zero; velocity = Vector2.zero; autoVelocity = Vector2.zero; }
-        public void ResetPosition()
+        public void ResetPosition(string reason = "manual")
         {
+            if (GetComponent<ClawDiagnostics>()) LocalDiagnostics.Write("reset", "reason=" + reason);
             ReleaseControls(); pendingDirection = Vector2.zero; yaw = 0;
             carriage.localPosition = new Vector3(homePosition.x, carriage.localPosition.y, homePosition.y);
             if (claw) claw.localRotation = Quaternion.identity;

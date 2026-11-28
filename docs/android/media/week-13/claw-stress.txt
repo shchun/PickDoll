@@ -1,0 +1,6 @@
+PASS
+tuned=False attempts=28 completed=28 max_anchor_error_m=0.286565 longest_error_over_15mm_s=1.580
+attempt=24 step=1 phase=Preparing hub=(0.34, 1.37, 0.24) finger=(0.28, 1.35, 0.25)
+tuned=True attempts=28 completed=28 max_anchor_error_m=0.004998 longest_error_over_15mm_s=0.000
+attempt=21 step=225 phase=Lowering hub=(-0.30, 0.90, 0.28) finger=(-0.33, 0.90, 0.33)
+combo_15s_boundary_timeout_dedup_reset=True
