@@ -61,7 +61,7 @@ namespace PickDoll
             yield return new WaitForSeconds(2.5f);
             bool startup=Mathf.Abs(cycle.hub.position.y-cycle.topHeight)<.03f&&Vector2.Distance(cycle.machine.Aim,receiver.holeCenter)<.003f&&!cycle.CanPress;
             startup&=Vector3.Distance(cycle.suspensionAnchor.position,cycle.hub.position+Vector3.up*cycle.suspensionLength)<.03f;
-            foreach(var finger in cycle.fingers)startup&=Vector3.Distance(finger.transform.position,cycle.hub.transform.TransformPoint(finger.connectedAnchor))<.02f;
+            foreach(var finger in cycle.ActiveFingers)startup&=Vector3.Distance(finger.transform.position,cycle.hub.transform.TransformPoint(finger.connectedAnchor))<.02f;
             passed&=startup;report.AppendLine("startup_joint_assembly_stable="+startup);
             yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"week11-preview.png"));
             bool stock=cycle.prizes.Length==7&&cycle.prizes.Select(p=>p.GetComponent<PrizeIdentity>().SpeciesId).Distinct().Count()==7;
@@ -138,13 +138,13 @@ namespace PickDoll
             }
             bool pathResponse=Mathf.Abs(pathYaw[0]-pathYaw[1])>.02f&&twistTail[0]<twistPeak[0]&&twistTail[1]<twistPeak[1];
             passed&=pathResponse;report.AppendLine($"passive_path_twist_and_decay={pathResponse}; yaw={pathYaw[0]:F3},{pathYaw[1]:F3}; peak={twistPeak[0]:F3},{twistPeak[1]:F3}; tail={twistTail[0]:F3},{twistTail[1]:F3}");
-            var chain=new ComboChain();bool comboBounds=chain.Accept("a",0)==1&&chain.Accept("b",10)==2&&chain.Accept("c",20.0001)==1&&chain.Accept("d",20.0001)==2&&chain.Accept("d",21)==2;chain.Reset();comboBounds&=chain.Accept("e",22)==1;
-            passed&=comboBounds;report.AppendLine("combo_10s_boundary_timeout_simultaneous_dedup_reset="+comboBounds);
+            var chain=new ComboChain();bool comboBounds=chain.Accept("a",0)==1&&chain.Accept("b",ComboChain.Window)==2&&chain.Accept("c",(ComboChain.Window*2+.0001))==1&&chain.Accept("d",(ComboChain.Window*2+.0001))==2&&chain.Accept("d",ComboChain.Window*2+1)==2;chain.Reset();comboBounds&=chain.Accept("e",ComboChain.Window*2+2)==1;
+            passed&=comboBounds;report.AppendLine("combo_window_boundary_timeout_simultaneous_dedup_reset="+comboBounds);
             var book=FindAnyObjectByType<CollectionBook>();book.SetOpen(true);book.Select(3);yield return null;var preview=GameObject.Find("Preview model").transform;var oldRotation=preview.rotation;book.Rotate(100);bool bookInput=Time.timeScale==0&&!cycle.machine.enabled&&Quaternion.Angle(oldRotation,preview.rotation)>20;book.SetOpen(false);bookInput&=Time.timeScale==1&&cycle.machine.enabled;passed&=bookInput;report.AppendLine("book_modal_preview_rotation_input_and_resume="+bookInput);
             // A visibly closed starting pose must open before any descent; one GRAB is sufficient.
             var body=Fixture(new Vector2(.17f,-.16f),new Vector3(.17f,.727f,-.16f),Quaternion.identity);
-            var poses=cycle.fingers.Select(f=>Quaternion.Inverse(cycle.hub.rotation)*f.transform.rotation).ToArray();
-            for(int i=0;i<cycle.fingers.Length;i++){var finger=cycle.fingers[i].GetComponent<Rigidbody>();finger.rotation=cycle.hub.rotation*poses[i]*Quaternion.Euler(0,0,cycle.closeAngle);finger.angularVelocity=Vector3.zero;}
+            var poses=cycle.ActiveFingers.Select(f=>Quaternion.Inverse(cycle.hub.rotation)*f.transform.rotation).ToArray();
+            for(int i=0;i<cycle.ActiveFingers.Length;i++){var finger=cycle.ActiveFingers[i].GetComponent<Rigidbody>();finger.rotation=cycle.hub.rotation*poses[i]*Quaternion.Euler(0,0,cycle.closeAngle);finger.angularVelocity=Vector3.zero;}
             Physics.SyncTransforms();cycle.Press();bool preparation=cycle.Phase==ClawCycle.Stage.Preparing;float limit=Time.realtimeSinceStartup+3;
             while(cycle.Phase==ClawCycle.Stage.Preparing&&Time.realtimeSinceStartup<limit){passed&=cycle.hub.position.y>cycle.topHeight-.025f;yield return new WaitForFixedUpdate();}
             bool openBeforeDrop=preparation&&cycle.Phase==ClawCycle.Stage.Lowering&&cycle.OpenFingerCount>=2;passed&=openBeforeDrop;report.AppendLine("closed_start_opens_before_descent="+openBeforeDrop);

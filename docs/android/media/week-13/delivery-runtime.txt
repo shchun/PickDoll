@@ -1,0 +1,65 @@
+PASS
+startup_joint_assembly_stable=True
+seven_prizes_seven_species_stable=True; lying=2
+new_round_home_0=True
+new_round_home_1=True
+new_round_home_2=True
+no_success_on_start_or_new_round=True
+sound_haptics_buttons_and_saved_preferences=True
+transparent_header_rendered_behind=True
+analog_drag_precision_release_ownership=True; small=0.0077; full=0.1335
+joystick_excludes_camera_raycast=True
+empty_header_routes_camera_gestures=True
+pinch_1_to_2_limits_view_reset_no_yaw_jump=True
+direction_and_precision_buttons_removed=True
+safe_touch_layout_540x960=True
+passive_path_twist_and_decay=True; yaw=-23.268,-4.948; peak=0.525,0.207; tail=0.110,0.005
+combo_window_boundary_timeout_simultaneous_dedup_reset=True
+book_modal_preview_rotation_input_and_resume=True
+closed_start_opens_before_descent=True
+exit_without_chute_not_counted=True
+entry_only_not_counted=True
+saved_acquisition_card_once=True
+upright_delivery=True; duplicate_probes_once=True; pos=(-0.23, 0.14, -1.04)
+gravity_pose_90=True; pos=(-0.08, 0.14, -1.04)
+gravity_pose_180=True; pos=(-0.23, 0.14, -0.95)
+transparent_guard_blocks_rolling=True; pos=(-0.23, 0.73, 0.06)
+tray_edge_floor_contact_counts=True
+chute_or_ramp_without_final_floor_not_counted=True
+automatic_0: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.36, 0.14, -1.18); total=5; lowest=0.956; stop=PRIZE_CONTACT; force=6.85; safe=True
+automatic_1: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.35, 0.14, -1.28); total=6; lowest=1.037; stop=PRIZE_CONTACT; force=12.29; safe=True
+automatic_2: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.22, 0.14, -1.23); total=7; lowest=0.956; stop=PRIZE_CONTACT; force=6.85; safe=True
+automatic_3: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.33, 0.13, -1.19); total=8; lowest=0.941; stop=PRIZE_CONTACT; force=11.52; safe=True
+automatic_4: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.37, 0.15, -1.26); total=9; lowest=1.013; stop=PRIZE_CONTACT; force=9.54; safe=True
+center_grip_failed_try_visible_edges species=cream_cushion
+shape_edge offset=(0.04, 0.04): acquired=True; pos=(-0.37, 0.11, -1.28)
+automatic_5: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.37, 0.11, -1.28); total=10; lowest=0.844; stop=PRIZE_CONTACT; force=4.87; safe=True
+automatic_6: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.32, 0.13, -1.26); total=11; lowest=0.965; stop=PRIZE_CONTACT; force=10.06; safe=True
+automatic_7: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.17, 0.14, -1.18); total=12; lowest=0.842; stop=STRUCTURE; force=0.00; safe=True
+automatic_8: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.26, 0.14, -1.09); total=13; lowest=0.830; stop=DEPTH_LIMIT; force=0.00; safe=True
+automatic_9: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.06, 0.14, -1.26); total=14; lowest=0.842; stop=STRUCTURE; force=0.00; safe=True
+automatic_10: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.18, 0.13, -1.28); total=15; lowest=0.836; stop=STRUCTURE; force=0.00; safe=True
+automatic_11: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.31, 0.13, -1.12); total=16; lowest=0.857; stop=PRIZE_CONTACT; force=8.03; safe=True
+automatic_12: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.34, 0.11, -1.28); total=17; lowest=0.831; stop=STRUCTURE; force=0.00; safe=True
+automatic_13: acquired=True; home=True; visible_tray=True; busy_input_blocked=True; no_early_count=True; high_release=True; pos=(-0.27, 0.13, -1.28); total=18; lowest=0.838; stop=STRUCTURE; force=0.00; safe=True
+hung_rabbit_then_second_delivery_two_unique_receipts=True
+empty_cycle_returns_without_acquisition=True
+new_round_preserves_session_count=True; events=20; total=20
+large_counter_matches_receipts=True
+grab_over_hole_blocked=True
+reload_preserves_total_and_species=True
+all_seven_species_preserved_and_discovered=True
+new_round_resets_combo_only=True
+all_receipts_one_feedback_each_no_replay=True; accepted=20; events=20
+empty_display_waits_for_unfinished_delivery=True
+batch_delivery_0=True; pos=(-0.23, 0.14, -1.03)
+batch_delivery_1=True; pos=(-0.22, 0.14, -1.00)
+batch_delivery_2=True; pos=(-0.24, 0.14, -0.91)
+batch_delivery_3=True; pos=(-0.19, 0.16, -0.89)
+batch_delivery_4=True; pos=(-0.24, 0.13, -0.92)
+batch_delivery_5=True; pos=(-0.24, 0.12, -0.85)
+batch_delivery_6=True; pos=(-0.22, 0.13, -0.92)
+all_seven_delivered_auto_refill_once_preserves_count_restores_models=True
+sound_off_mutes_acquisition_and_refill=True
+refill_notification_no_false_receipt_or_repeat=True
+final_save_total=27

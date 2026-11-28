@@ -195,3 +195,12 @@ Week 11 품평 보완(0.11.1): 배출 완료 인형은 1.4초 뒤 정리하고, 
 ## GitHub Actions 클라우드 빌드
 
 GitHub Actions의 `Unity Cloud Build`를 수동 실행하면 Unity 공식 클라우드에서 커밋된 씬을 Android·Windows 순서로 빌드하고 결과 파일·체크섬을 7일 보관합니다. 로컬 PC는 빌드하지 않습니다. [설정·자격 정보·실행 안내](../docs/android/setup/github-actions.html)를 참고하세요.
+
+
+## Week 13 local checks
+
+`tools/Run-Unity.ps1 -Week 13 -Task Validate` runs the claw constraint comparison and 15-second combo boundaries without a player build.
+
+`tools/Test-Week13.ps1` checks actual grabbing, delivery, collection and restocking in the Windows player.
+
+`tools/Get-DeviceDiagnostics.ps1 -Serial <device>` retrieves the two bounded local diagnostic files. Match screenshot timestamps with the ISO timestamp and UTC offset in each line. No automatic upload occurs.

@@ -4,7 +4,7 @@ namespace PickDoll
 {
     public sealed class ComboChain
     {
-        public const double Window=10;
+        public const double Window=15;
         private readonly HashSet<string> seen=new HashSet<string>();
         private double last=double.NegativeInfinity;
         public int Count {get;private set;}

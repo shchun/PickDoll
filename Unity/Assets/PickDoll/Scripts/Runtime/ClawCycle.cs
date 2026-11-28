@@ -8,6 +8,8 @@ namespace PickDoll
         public MachineController machine;
         public Rigidbody hub;
         public HingeJoint[] fingers;
+        public bool stabilizeFingerAnchors;
+        public Joint[] ActiveFingers => fingers;
         public Rigidbody[] prizes;
         public PrizeStock stock;
         public Transform cable;
@@ -38,8 +40,8 @@ namespace PickDoll
         private bool needsOpenSpace;
         public int OpenFingerCount { get {
             if(!initialized)return 0;int count=0;
-            for(int i=0;i<fingers.Length;i++) {
-                var open=fingerRotations[i];var local=Quaternion.Inverse(hub.rotation)*fingers[i].transform.rotation;
+            for(int i=0;i<ActiveFingers.Length;i++) {
+                var open=fingerRotations[i];var local=Quaternion.Inverse(hub.rotation)*ActiveFingers[i].transform.rotation;
                 float angle=Vector3.SignedAngle(open*Vector3.down,local*Vector3.down,open*Vector3.forward);
                 if(angle>=-openingTolerance)count++;
             }
@@ -79,10 +81,10 @@ namespace PickDoll
             initialized = true;
             prizePositions = new Vector3[prizes.Length]; prizeRotations = new Quaternion[prizes.Length];
             for (int i = 0; i < prizes.Length; i++) { prizePositions[i] = prizes[i].position; prizeRotations[i] = prizes[i].rotation; }
-            fingerRotations = new Quaternion[fingers.Length];
-            for (int i = 0; i < fingers.Length; i++) fingerRotations[i] = Quaternion.Inverse(hub.rotation) * fingers[i].transform.rotation;
-            for (int a = 0; a < fingers.Length; a++) for (int b = a + 1; b < fingers.Length; b++)
-                foreach (var x in fingers[a].GetComponentsInChildren<Collider>()) foreach (var y in fingers[b].GetComponentsInChildren<Collider>()) Physics.IgnoreCollision(x, y);
+            fingerRotations = new Quaternion[ActiveFingers.Length];
+            for (int i = 0; i < ActiveFingers.Length; i++) fingerRotations[i] = Quaternion.Inverse(hub.rotation) * ActiveFingers[i].transform.rotation;
+            for (int a = 0; a < ActiveFingers.Length; a++) for (int b = a + 1; b < ActiveFingers.Length; b++)
+                foreach (var x in ActiveFingers[a].GetComponentsInChildren<Collider>()) foreach (var y in ActiveFingers[b].GetComponentsInChildren<Collider>()) Physics.IgnoreCollision(x, y);
             if(receiver)receiver.Initialize();
             height = topHeight; Phase = Stage.Ready;
             SetSpring(0);
@@ -108,10 +110,10 @@ namespace PickDoll
                 suspensionAnchor.position = target + Vector3.up * suspensionLength;
                 hub.linearVelocity = Vector3.zero; hub.angularVelocity = Vector3.zero;
             }
-            for (int i = 0; i < fingers.Length; i++)
+            for (int i = 0; i < ActiveFingers.Length; i++)
             {
-                var body = fingers[i].GetComponent<Rigidbody>();
-                body.position = hub.position + hub.rotation * fingers[i].connectedAnchor;
+                var body = ActiveFingers[i].GetComponent<Rigidbody>();
+                body.position = hub.position + hub.rotation * ActiveFingers[i].connectedAnchor;
                 body.rotation = hub.rotation * fingerRotations[i];
                 body.linearVelocity = Vector3.zero; body.angularVelocity = Vector3.zero; body.WakeUp();
             }
@@ -126,11 +128,12 @@ namespace PickDoll
         }
         private void SetSpring(float target)
         {
-            foreach (var finger in fingers)
+            foreach (var finger in ActiveFingers)
             {
                 float forceScale = Phase == Stage.Closing || Phase == Stage.Raising || Phase == Stage.Carry || Phase == Stage.Returning || Phase == Stage.Settling ? CurrentGripScale : 1;
-                var spring = finger.spring; spring.spring = gripStiffness * forceScale; spring.damper = gripDamping * Mathf.Sqrt(forceScale);
-                spring.targetPosition = target; finger.spring = spring; finger.useSpring = true;
+                var hinge = (HingeJoint)finger;
+                var spring = hinge.spring; spring.spring = gripStiffness * forceScale; spring.damper = gripDamping * Mathf.Sqrt(forceScale);
+                spring.targetPosition = target; hinge.spring = spring; hinge.useSpring = true;
             }
         }
         public float EvaluateGrip(float categoryRoll, float strengthRoll)
@@ -150,7 +153,7 @@ namespace PickDoll
         }
         public void Step(float dt)
         {
-            Initialize(); elapsed += dt;
+            Initialize(); StabilizeFingerAnchors(); elapsed += dt;
             if(needsOpenSpace&&OpenFingerCount>=2)needsOpenSpace=false;
             switch (Phase)
             {
@@ -209,8 +212,34 @@ namespace PickDoll
             else { hub.MovePosition(target); hub.MoveRotation(machine.claw.rotation); }
         }
         private void FixedUpdate() { if (!paused) Step(Time.fixedDeltaTime); }
+        public float StabilizeFingerAnchors()
+        {
+            // Project only the positional joint constraint. Keep finger rotation,
+            // motor force and prize motion; never reset the assembly to an open pose.
+            if (!stabilizeFingerAnchors) return 0;
+            float worst = 0;
+            foreach (var joint in fingers)
+            {
+                if (!joint || !joint.connectedBody) continue;
+                var body = joint.GetComponent<Rigidbody>();
+                var anchor = body.position + body.rotation * Vector3.Scale(joint.anchor, body.transform.lossyScale);
+                var target = hub.position + hub.rotation * Vector3.Scale(joint.connectedAnchor, hub.transform.lossyScale);
+                var delta = target - anchor;
+                worst = Mathf.Max(worst, delta.magnitude);
+                if (delta.sqrMagnitude <= .005f * .005f) continue;
+                var diagnostic = GetComponent<ClawDiagnostics>();
+                if (diagnostic) diagnostic.RecordProjection(joint, delta.magnitude);
+                body.position += delta;
+                var relative = body.GetPointVelocity(anchor) - hub.GetPointVelocity(target);
+                var direction = delta.normalized;
+                float separation = Vector3.Dot(relative, direction);
+                if (separation < 0) body.linearVelocity -= direction * separation;
+            }
+            return worst;
+        }
         private void LateUpdate()
         {
+            StabilizeFingerAnchors();
             if (!cable) return;
             var top = machine.carriage.position - Vector3.up * .02f;
             var bottom = hub.position + Vector3.up * .02f;

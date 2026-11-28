@@ -1,0 +1,16 @@
+PASS
+startup_joint_assembly_stable=True
+seven_prizes_seven_species_stable=True; lying=4
+new_round_home_0=True
+new_round_home_1=True
+new_round_home_2=True
+no_success_on_start_or_new_round=True
+sound_haptics_buttons_and_saved_preferences=True
+transparent_header_rendered_behind=True
+analog_drag_precision_release_ownership=True; small=0.0072; full=0.1207
+joystick_excludes_camera_raycast=True
+empty_header_routes_camera_gestures=True
+pinch_1_to_2_limits_view_reset_no_yaw_jump=True
+direction_and_precision_buttons_removed=True
+safe_touch_layout_906x1088=True
+book_safe_area=True
