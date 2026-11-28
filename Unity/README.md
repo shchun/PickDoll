@@ -204,3 +204,5 @@ GitHub Actions의 `Unity Cloud Build`를 수동 실행하면 Unity 공식 클라
 `tools/Test-Week13.ps1` checks actual grabbing, delivery, collection and restocking in the Windows player.
 
 `tools/Get-DeviceDiagnostics.ps1 -Serial <device>` retrieves the two bounded local diagnostic files. Match screenshot timestamps with the ISO timestamp and UTC offset in each line. No automatic upload occurs.
+
+Week 13 Android builds also run `python tools/Verify-AndroidIcons.py Builds/Week13/Android/PickDoll-week13.apk` (requires Pillow). This checks the packaged adaptive icon layers at every density so an opaque foreground cannot hide the mascot.

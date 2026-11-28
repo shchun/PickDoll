@@ -45,3 +45,7 @@ if ($Week -eq 11) { $markers = @{ Generate='PICKDOLL_WEEK11_SCENE_READY'; Valida
 if ($Week -eq 12) { $markers = @{ Generate='PICKDOLL_WEEK12_SCENE_READY'; Validate='PICKDOLL_WEEK12_VALIDATION_PASS'; Windows='PICKDOLL_WEEK12_WINDOWS_READY'; Android='PICKDOLL_WEEK12_ANDROID_READY'; Preview='PICKDOLL_WEEK12_PREVIEW_READY'; All='PICKDOLL_WEEK12_ANDROID_READY' } }
 if ($Week -eq 13) { $markers = @{ Generate='PICKDOLL_WEEK13_SCENE_READY'; Validate='PICKDOLL_WEEK13_VALIDATION_PASS'; Windows='PICKDOLL_WEEK13_WINDOWS_READY'; Android='PICKDOLL_WEEK13_ANDROID_READY'; All='PICKDOLL_WEEK13_ANDROID_READY' } }
 if (-not (Select-String -LiteralPath $logPath -SimpleMatch $markers[$Task] -Quiet)) { throw "Expected success marker missing. See $logPath" }
+if ($Week -eq 13 -and $Task -in @('Android','All')) {
+    & python (Join-Path $PSScriptRoot 'Verify-AndroidIcons.py') (Join-Path $projectPath 'Builds\Week13\Android\PickDoll-week13.apk')
+    if ($LASTEXITCODE -ne 0) { throw 'Packaged Android icon verification failed.' }
+}

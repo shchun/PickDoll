@@ -42,8 +42,9 @@ namespace PickDoll.Editor
                     if (slot.minLayerCount > 1)
                     {
                         var layers = new Texture2D[Math.Min(3, slot.maxLayerCount)];
-                        layers[0] = mascot;
-                        layers[1] = AssetDatabase.LoadAssetAtPath<Texture2D>(root + "icon-background.png");
+                        // Unity adaptive icon order is background, then foreground.
+                        layers[0] = AssetDatabase.LoadAssetAtPath<Texture2D>(root + "icon-background.png");
+                        layers[1] = mascot;
                         if (layers.Length > 2) layers[2] = AssetDatabase.LoadAssetAtPath<Texture2D>(root + "icon-monochrome.png");
                         slot.SetTextures(layers);
                     }
